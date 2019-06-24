@@ -20,7 +20,7 @@
   "author": "noyobo <noyobo@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "prepublish": "npm run build",
+    "prepublishOnly": "npm run build",
     "build": "babel src --out-dir lib",
     "test": "echo \"test\"",
     "test:jest": "jest",
