@@ -14,7 +14,7 @@ describe('init context', () => {
   });
   test('load plugins', () => {
     // builtInPlugins length is 2
-    expect(context.plugins.length).toBe(5);
+    expect(context.plugins.length).toBe(6);
   });
 
   it('plugin with option', async () => {
