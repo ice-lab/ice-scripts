@@ -3,7 +3,7 @@
   "scripts": {
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --cache --ext .js .jsx ./",
-    "ci": "npm run lint"
+    "ci": "npm run lint:nofix"
   },
   "repository": {
     "type": "git",
