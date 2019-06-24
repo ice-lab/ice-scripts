@@ -3,7 +3,7 @@ language: node_js
 node_js:
   - '8'
 before_script:
-  - npm run intall:batch
+  - npm run install:batch
 script:
   - npm run lint:nofix
   - npm run test
