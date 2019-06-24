@@ -58,3 +58,11 @@ $ npm run build
 ```
 
 构建产物默认生成到 `./build` 目录下。
+
+## 相关链接
+
+- [issue 反馈](https://github.com/alibaba/ice/issues/new)
+
+## License
+
+[MIT](LICENSE)
