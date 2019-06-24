@@ -4,7 +4,7 @@
     "lint": "npm run lint:nofix -- --fix",
     "lint:nofix": "eslint --cache --ext .js .jsx ./",
     "ci": "npm run lint:nofix",
-    "bootstrap": "lerna exec -- npm install",
+    "install:batch": "lerna exec -- npm install",
     "test": "lerna exec -- npm run test"
   },
   "repository": {
@@ -29,5 +29,8 @@
     "husky": "^1.3.1",
     "lerna": "^3.15.0"
   },
-  "name": "ice-scripts"
+  "name": "ice-scripts",
+  "dependencies": {
+    "@babel/plugin-proposal-function-bind": "^7.2.0"
+  }
 }
