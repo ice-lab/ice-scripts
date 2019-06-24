@@ -1,0 +1,20 @@
+# 忽略目录
+build/
+node_modules/
+
+# node 覆盖率文件
+coverage/
+
+# 忽略文件
+**/*-min.js
+**/*.min.js
+
+# 忽略 packages 部分包
+# packages/ice-npm-utils
+packages/clean-css-parallel
+packages/css-prefix-plugin
+packages/extract-css-assets-webpack-plugin
+packages/uglify-parallel
+packages/webpack-dev-mock
+packages/webpack-plugin-import
+packages/ice-skin-loader
