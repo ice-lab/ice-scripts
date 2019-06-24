@@ -17,25 +17,28 @@ describe('init context', () => {
     expect(context.plugins.length).toBe(6);
   });
 
-  it('plugin with option', async () => {
+  it('plugin with option', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.resolve.alias).toEqual({ react: 'b' });
+    done();
   });
 
-  it('require plugin', async () => {
+  it('require plugin', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.output.filename).toBe('[name].bundle.js');
+    done();
   });
 
-  it('plugin defined by string', async () => {
+  it('plugin defined by string', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.output.path).toBe('custom');
+    done();
   });
 
-  it('default values', async () => {
+  it('default values', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.resolve.extensions).toEqual(['.js', '.jsx', '.json', '.html', '.ts', '.tsx']);
@@ -44,6 +47,7 @@ describe('init context', () => {
       require.resolve('react-dev-utils/webpackHotDevClient'),
       path.resolve(process.cwd(), 'src/index.js'),
     ]);
+    done();
   });
 });
 
