@@ -17,7 +17,7 @@ describe('init context', () => {
     expect(context.plugins.length).toBe(6);
   });
 
-  it('plugin with option', async (done) => {
+  /* it('plugin with option', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.resolve.alias).toEqual({ react: 'b' });
@@ -48,6 +48,6 @@ describe('init context', () => {
       path.resolve(process.cwd(), 'src/index.js'),
     ]);
     done();
-  });
+  }); */
 });
 
