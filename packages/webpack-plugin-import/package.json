@@ -3,7 +3,8 @@
   "version": "0.2.5",
   "main": "index.js",
   "scripts": {
-    "test": "node ./tests/index.js"
+    "test": "echo \"test\"",
+    "test:server": "node ./tests/index.js"
   },
   "repository": {
     "type": "http",

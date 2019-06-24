@@ -3,7 +3,9 @@
   "version": "0.1.1",
   "description": "ice-scripts plugin for localize CSS assets",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "echo \"test\""
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

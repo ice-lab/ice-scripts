@@ -3,6 +3,9 @@
   "version": "0.3.0-1",
   "description": "ice skin loader",
   "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"test\""
+  },
   "keywords": [
     "ice"
   ],
