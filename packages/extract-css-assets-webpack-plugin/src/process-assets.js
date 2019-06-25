@@ -54,7 +54,7 @@ export default postcss.plugin(
               const url = originUrl.startsWith('http')
                 ? originUrl
                 : `http:${originUrl}`;
-              return request.get({ url, encoding: null }).then((res) => {
+              return request.get({ url, encoding: null, ...options.requsetOptions }).then((res) => {
                 const buffer = Buffer.from(res, 'utf-8');
                 const fileExtName = path.extname(url);
                 const fileExtType = fileType(buffer);
