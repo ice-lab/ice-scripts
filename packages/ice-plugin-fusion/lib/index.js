@@ -97,7 +97,6 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
         srcFile: iconScssPath,
         variableFile: themeFile,
         compileThemeIcon: true,
-        themeNextVersion: (/^@alif(e|d)\/theme-/.test(themePackage) || themePackage === '@icedesign/theme') ? '1.x' : '0.x',
         pkg,
         distMatch: (chunkName, compilerEntry, compilationPreparedChunks) => {
           const entriesAndPreparedChunkNames = normalizeEntry(
