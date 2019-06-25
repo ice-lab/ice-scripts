@@ -97,7 +97,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
         srcFile: iconScssPath,
         variableFile: themeFile,
         compileThemeIcon: true,
-        pkg,
+        themeConfig: themeConfig || {},
         distMatch: (chunkName, compilerEntry, compilationPreparedChunks) => {
           const entriesAndPreparedChunkNames = normalizeEntry(
             compilerEntry,
