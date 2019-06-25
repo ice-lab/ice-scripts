@@ -49,7 +49,7 @@ export default postcss.plugin(
 
         if (Object.keys(networkRequestMap).length > 0) {
           Promise.all(
-            Object.entries(networkRequestMap).map(([key, networkRequest]) => {
+            Object.entries(networkRequestMap).map(([urlIdentity, networkRequest]) => {
               const originUrl = networkRequest.url;
               const url = originUrl.startsWith('http')
                 ? originUrl
