@@ -49,12 +49,12 @@ export default postcss.plugin(
 
         if (Object.keys(networkRequestMap).length > 0) {
           Promise.all(
-            Object.entries(networkRequestMap).map(([key, networkRequest]) => {
+            Object.entries(networkRequestMap).map(([urlIdentity, networkRequest]) => {
               const originUrl = networkRequest.url;
               const url = originUrl.startsWith('http')
                 ? originUrl
                 : `http:${originUrl}`;
-              return request.get({ url, encoding: null }).then((res) => {
+              return request.get({ url, encoding: null, ...options.requsetOptions }).then((res) => {
                 const buffer = Buffer.from(res, 'utf-8');
                 const fileExtName = path.extname(url);
                 const fileExtType = fileType(buffer);
