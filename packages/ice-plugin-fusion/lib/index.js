@@ -201,7 +201,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
     // 4. 检测组件版本
     config.plugin('CheckIceComponentsDepsPlugin')
       .use(CheckIceComponentsDepsPlugin, [{
-        pkg: context.pkg,
+        pkg,
         log,
       }]);
   });
