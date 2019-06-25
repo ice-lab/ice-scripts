@@ -3,7 +3,6 @@ const Context = require('../../lib/core/Context');
 
 describe('init context', () => {
   const context = new Context({
-    command: 'dev',
     rootDir: path.join(__dirname, '../fixtures/service'),
     args: {
       disabledReload: false,
@@ -14,36 +13,39 @@ describe('init context', () => {
   });
   test('load plugins', () => {
     // builtInPlugins length is 2
-    expect(context.plugins.length).toBe(5);
+    expect(context.plugins.length).toBe(6);
   });
 
-  it('plugin with option', async () => {
+  it('plugin with option', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.resolve.alias).toEqual({ react: 'b' });
+    done();
   });
 
-  it('require plugin', async () => {
+  it('require plugin', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.output.filename).toBe('[name].bundle.js');
+    done();
   });
 
-  it('plugin defined by string', async () => {
+  it('plugin defined by string', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.output.path).toBe('custom');
+    done();
   });
 
-  it('default values', async () => {
+  it('default values', async (done) => {
     await context.runPlugins();
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.resolve.extensions).toEqual(['.js', '.jsx', '.json', '.html', '.ts', '.tsx']);
     expect(webpackConfig.entry.index).toEqual([
       require.resolve('@babel/polyfill'),
-      require.resolve('react-dev-utils/webpackHotDevClient'),
       path.resolve(process.cwd(), 'src/index.js'),
     ]);
+    done();
   });
 });
 

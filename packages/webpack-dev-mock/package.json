@@ -3,6 +3,9 @@
   "version": "0.1.2",
   "description": "Webpack devserver middleware mock server",
   "main": "index.js",
+  "scripts": {
+    "test": "echo \"test\""
+  },
   "author": "noyobo<nongyoubao@alibaba-inc.com>",
   "license": "MIT",
   "dependencies": {

@@ -3,7 +3,9 @@
   "version": "0.1.4",
   "description": "ice-scripts plugin for antd",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "echo \"test\""
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

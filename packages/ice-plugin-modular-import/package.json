@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "ice-scripts plugin for babel-plugin-import",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test": "echo \"test\""
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {

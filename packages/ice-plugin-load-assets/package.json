@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "description": "ice plugin for load assets",
   "main": "index.js",
+  "scripts": {
+    "test": "echo \"test\""
+  },
   "keywords": [
     "ice",
     "ice-plugin"

@@ -4,7 +4,7 @@
   "description": "A webpack plugin for adding css prefix of component package.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"test\""
   },
   "repository": {
     "type": "http",

@@ -1,18 +1,10 @@
 const Config = require('webpack-chain');
 const userConfigPlugin = require('../../lib/plugins/userConfig');
-const processEntry = require('../../lib/config/processEntry');
 
 const MockApi = function () {
   this.config = new Config();
   this.chainWebpack = (fn) => {
     fn(this.config);
-  };
-  this.processEntry = (entry) => {
-    const { commandArgs, command, userConfig } = this.context;
-    return processEntry(entry, {
-      polyfill: userConfig.injectBabel !== 'runtime',
-      hotDev: command === 'dev' && !commandArgs.disabledReload,
-    });
   };
 };
 
@@ -39,6 +31,16 @@ describe('user config', () => {
         },
         commandArgs: {},
       };
+      // mock HtmlWebpackPlugin
+      api.config.plugin('HtmlWebpackPlugin')
+        .use(require('html-webpack-plugin'), [{
+          inject: true,
+          templateParameters: {
+            NODE_ENV: process.env.NODE_ENV,
+          },
+          template: './index.html',
+          minify: false,
+        }]);
       userConfigPlugin(api);
       expect(api.config.toConfig().entry).toEqual({
         index: ['src/index.js'],
@@ -71,6 +73,11 @@ describe('user config', () => {
           },
         },
       };
+      // mock MiniCssExtractPlugin
+      api.config.plugin('MiniCssExtractPlugin')
+        .use(require('mini-css-extract-plugin'), [{
+          filename: '[name].css',
+        }]);
       api.config.output.filename('js/[name].[hash:6].js');
       userConfigPlugin(api);
       expect(api.config.output.get('filename')).toBe('test/js/[name].[hash:6].js');
