@@ -76,8 +76,7 @@ module.exports = class AppendStylePlugin {
     this.srcFile = options.srcFile; // 源文件
     this.variableFile = options.variableFile; // scss 变量文件
     this.compileThemeIcon = options.compileThemeIcon; // 是否为主题的 icons.scss
-    this.themeNextVersion = options.themeNextVersion; // 主题包对应基础组件版本
-    this.pkg = options.pkg; // 项目的 package.json 内容
+    this.themeConfig = options.themeConfig; // themeConfig 配置
     this.distMatch =
       options.distMatch instanceof RegExp // chunkName 去匹配的逻辑，正则或者函数
         ? (chunkName) => options.distMatch.test(chunkName)
@@ -134,10 +133,10 @@ module.exports = class AppendStylePlugin {
 
   compileToCSS(srcFile, themeVariableFile) {
     if (this.type === 'sass') {
-      const themeConfig = this.pkg.themeConfig || {};
+      const themeConfig = this.themeConfig || {};
       let coreVarCode = '';
 
-      if (this.compileThemeIcon && this.themeNextVersion === '1.x') {
+      if (this.compileThemeIcon) {
         // 1.x 主题包的 icons.scss 里使用了 css-prefix 变量，因此这里需要手动声明下
         // 即便不手动声明，这里也需要支持自定义 css-prefix 能力
         const cssPrefix = themeConfig.nextPrefix || 'next-';

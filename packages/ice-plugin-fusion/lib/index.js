@@ -97,8 +97,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
         srcFile: iconScssPath,
         variableFile: themeFile,
         compileThemeIcon: true,
-        themeNextVersion: (/^@alif(e|d)\/theme-/.test(themePackage) || themePackage === '@icedesign/theme') ? '1.x' : '0.x',
-        pkg,
+        themeConfig: themeConfig || {},
         distMatch: (chunkName, compilerEntry, compilationPreparedChunks) => {
           const entriesAndPreparedChunkNames = normalizeEntry(
             compilerEntry,
@@ -202,7 +201,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
     // 4. 检测组件版本
     config.plugin('CheckIceComponentsDepsPlugin')
       .use(CheckIceComponentsDepsPlugin, [{
-        pkg: context.pkg,
+        pkg,
         log,
       }]);
   });
