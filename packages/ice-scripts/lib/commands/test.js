@@ -1,0 +1,57 @@
+const path = require('path');
+const fs = require('fs');
+const jest = require('jest');
+
+module.exports = (context) => {
+  const { commandArgs: { jestArgv }, rootDir } = context;
+
+  // get user jest config
+  const jestConfigPath = jestArgv.config
+    ? path.join(rootDir, jestArgv.config)
+    : path.join(rootDir, 'jest.config.js');
+  let userJestConfig = {};
+  if (fs.existsSync(jestConfigPath)) {
+    userJestConfig = require(jestConfigPath); // eslint-disable-line
+  }
+
+  // generate default jest config
+  const jestConfig = {
+    rootDir,
+    setupFiles: [require.resolve('@babel/polyfill')],
+    testMatch: ['**/?*.(spec|test).(j|t)s?(x)'],
+    transform: {
+      '^.+\\.(js|jsx|ts|tsx)$': require.resolve('../config/jest/babelTransform.js'),
+      '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': require.resolve('../config/jest/fileTransform.js'),
+    },
+    transformIgnorePatterns: [
+      '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx)$',
+      '^.+\\.module\\.(css|sass|scss|less)$',
+    ],
+    moduleNameMapper: {
+      '\\.(css|less|sass|scss)$': require.resolve('identity-obj-proxy'),
+      '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve('../config/jest/fileMock.js'),
+    },
+    moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
+    testPathIgnorePatterns: ['/node_modules/'],
+    ...userJestConfig,
+  };
+
+  return new Promise((resolve, reject) => {
+    jest.runCLI(
+      {
+        ...jestArgv,
+        config: JSON.stringify(jestConfig),
+      },
+      [rootDir],
+    ).then((res) => {
+      const { results } = res;
+      if (results.success) {
+        resolve();
+      } else {
+        reject(new Error('Jest failed'));
+      }
+    }).catch((err) => {
+      console.log(err);
+    });
+  });
+};
