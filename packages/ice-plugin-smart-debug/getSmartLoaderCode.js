@@ -19,6 +19,9 @@ var search = searchSplited.reduce(function(prev, current) {
   return prev;
 }, {});
 if (search.debug) {
+  console.log('通过 smartDebug 开启 ICE 智能调试服务' );
+}
+if (search.smartDebug) {
   var originValue = '127.0.0.1'; // can not be override
   var originPort = search.debugPort || '3333';
   var originPath = search.debugPath || '/${outputDir}/${outputAssetsPath.js ? `${outputAssetsPath.js}/index.js` : 'index.js'}';
