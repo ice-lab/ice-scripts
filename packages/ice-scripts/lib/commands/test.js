@@ -3,7 +3,7 @@ const fs = require('fs');
 const jest = require('jest');
 
 module.exports = (context) => {
-  const { commandArgs: { jestArgv }, rootDir } = context;
+  const { commandArgs: { jestArgv }, rootDir, webpackConfig } = context;
 
   // get user jest config
   const jestConfigPath = jestArgv.config
@@ -13,6 +13,18 @@ module.exports = (context) => {
   if (fs.existsSync(jestConfigPath)) {
     userJestConfig = require(jestConfigPath); // eslint-disable-line
   }
+
+  // get webpack.resolve.alias
+  const { alias } = webpackConfig.resolve;
+  const aliasModuleNameMapper = {};
+  Object.keys(alias || {}).forEach((key) => {
+    const aliasPath = alias[key];
+    // check path if it is a directory
+    if (fs.existsSync(aliasPath) && fs.statSync(aliasPath).isDirectory()) {
+      aliasModuleNameMapper[`^${key}/(.*)$`] = `${aliasPath}/$1`;
+    }
+    aliasModuleNameMapper[`^${key}$`] = aliasPath;
+  });
 
   // generate default jest config
   const jestConfig = {
@@ -30,6 +42,7 @@ module.exports = (context) => {
     moduleNameMapper: {
       '\\.(css|less|sass|scss)$': require.resolve('identity-obj-proxy'),
       '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$': require.resolve('../config/jest/fileMock.js'),
+      ...aliasModuleNameMapper,
     },
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     testPathIgnorePatterns: ['/node_modules/'],
