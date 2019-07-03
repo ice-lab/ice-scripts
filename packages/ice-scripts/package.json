@@ -11,7 +11,7 @@
     "clear": "rm -rf test/fixtures/*/build/ && rm -rf test/fixtures/*/.happypack/",
     "webpack": "npm run clear && node ./test/compiler.js",
     "start": "http-server ./test/fixtures/ -o -c-1 -p 8081",
-    "test": "LOG_LEVEL=verbose jest test/**/*.js"
+    "test": "LOG_LEVEL=verbose jest test/**/*.test.js"
   },
   "keywords": [
     "ice"
