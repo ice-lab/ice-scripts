@@ -3,7 +3,8 @@ const path = require('path');
 const { urlToRequest } = require('loader-utils');
 const resolve = require('resolve');
 
-module.exports = function resolveSassFile(sassFile, rootDir) {
+let charset = '';
+function resolveSassFile(sassFile, rootDir) {
   const matchModuleImport = /^~([^/]+|@[^/]+[/][^/]+)$/;
   let sassContent = '';
   try {
@@ -13,8 +14,12 @@ module.exports = function resolveSassFile(sassFile, rootDir) {
   } catch (e) {
     console.log('Can not open sass file', sassFile);
   }
-
-  return sassContent.replace(/@import[ ]*[url(]*["' ]?[^\s]*/g, (importStr) => {
+  // remove charset
+  // note: every import statement must be written in separate line
+  return sassContent.replace(/@charset[ ]*["' ]?[^\s]*["' ]?;/g, (str) => {
+    charset = str;
+    return '';
+  }).replace(/(^\s?|\n)\s?@import[ ]*[url(]*["' ]?[^\s]*/g, (importStr) => {
     if (importStr) {
       const [, importUrl] = /@import[ ]*[url(]?[("' ]?([^)'"\s]*)/.exec(importStr);
       if (importUrl) {
@@ -50,7 +55,12 @@ module.exports = function resolveSassFile(sassFile, rootDir) {
         // resolve file
         let resolvePath;
         for (let i = 0; i < resolvePaths.length; i++) {
-          const res = resolve.sync(resolvePaths[i], { basedir: rootDir });
+          let res = null;
+          try {
+            res = resolve.sync(resolvePaths[i], { basedir: rootDir });
+          } catch (err) {
+            res = '';
+          }
           if (res) {
             resolvePath = res;
             break;
@@ -58,10 +68,15 @@ module.exports = function resolveSassFile(sassFile, rootDir) {
         }
 
         if (resolvePath) {
-          return resolveSassFile(resolvePath);
+          return resolveSassFile(resolvePath, path.dirname(resolvePath));
         }
       }
     }
     return '';
   });
+}
+
+module.exports = (filePath, dir) => {
+  const sassContent = resolveSassFile(filePath, dir);
+  return `${charset ? `${charset}\n` : ''}${sassContent}`;
 };
