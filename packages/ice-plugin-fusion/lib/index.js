@@ -20,7 +20,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
   plugionOptions = plugionOptions || {};
   const { themePackage, themeConfig } = plugionOptions;
   let { uniteBaseComponent } = plugionOptions;
-  const { rootDir, pkg } = context;
+  const { rootDir, pkg, userConfig } = context;
 
   chainWebpack((config) => {
     // 1. 支持主题能力
@@ -97,8 +97,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
         srcFile: iconScssPath,
         variableFile: themeFile,
         compileThemeIcon: true,
-        themeNextVersion: (/^@alif(e|d)\/theme-/.test(themePackage) || themePackage === '@icedesign/theme') ? '1.x' : '0.x',
-        pkg,
+        themeConfig: themeConfig || {},
         distMatch: (chunkName, compilerEntry, compilationPreparedChunks) => {
           const entriesAndPreparedChunkNames = normalizeEntry(
             compilerEntry,
@@ -107,7 +106,11 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
           // 仅对 css 的 chunk 做 处理
           if (entriesAndPreparedChunkNames.length && /\.css$/.test(chunkName)) {
             // css/index.css -> index css/index.[hash].css -> index
-            const assetsFromEntry = path.basename(chunkName, path.extname(chunkName)).split('.')[0];
+            // css/_component_.usage.css -> _component_.usage
+            const assetsBaseName = path.basename(chunkName, path.extname(chunkName));
+            const assetsFromEntry = userConfig.hash
+              ? assetsBaseName.substring(0, assetsBaseName.lastIndexOf('.'))
+              : assetsBaseName;
             if (entriesAndPreparedChunkNames.indexOf(assetsFromEntry) !== -1) {
               return true;
             }
@@ -202,7 +205,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
     // 4. 检测组件版本
     config.plugin('CheckIceComponentsDepsPlugin')
       .use(CheckIceComponentsDepsPlugin, [{
-        pkg: context.pkg,
+        pkg,
         log,
       }]);
   });

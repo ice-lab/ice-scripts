@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.3
+
+- [feat] 支持 ice-scripts test 命令
+- [fix] 修复 ice-plugin-fusion 1.x组件主题 icon 编译问题
+- [fix] ice-plugin-smart-debug 开启调试参数变更为 `smartDebug`
+
 ## 2.1.2
 
 - [feat] 支持通过 `--config` 指定配置文件 #2188
