@@ -2,7 +2,7 @@
 
 ## 0.1.3
 
- - [fix] remote option importStyle in Demo markdown
+ - [fix] remove option importStyle in Demo markdown
  - [fix] fix RegExp of match sass import statement
 
 ## 0.1.2
