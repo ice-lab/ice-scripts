@@ -10,11 +10,11 @@
 
 `ice-scripts` have everything you need to build a React app:
 
-* fully configurable via `ice.config.js`, allow your project to have it's configration
-* the plugin system provides rich feature and allow the community to build reusable solutions
-* out of the box support for ES6+, TypeScripts, Less, Sass, CSS Modules
-* easy to modify built-in wepack configuration by webpack-chain
-* delightful javaScript testing based on Jest
+* Fully configurable via `ice.config.js`, allow your project to have it's configuration
+* The plugin system provides rich features and allow the community to build reusable solutions
+* Out of the box support for ES6+, TypeScripts, Less, Sass, CSS Modules
+* Easy to modify built-in webpack configuration by webpack-chain
+* Delightful JavaScript testing based on Jest
 
 ## Getting Started
 
@@ -39,12 +39,42 @@ $ npm start
 
 Runs the app in development mode.
 
-It will open `http://localhost:4444` for preview. The page will automatically reload if you make change to the code.
+It will open `http://localhost:4444` for preview. The page will be automatically reloaded if you make changes to the code.
 
 ```bash
 $ npm run build
 ```
 Builds the app for prodution.
+
+## Configuration
+
+Out of the box, `ice-scripts` won't require you to use a configuration file. If you need to customize your project confg, you can create a `ice.config.js` file in the root folder and `ice-scripts` will automatically use it.
+
+**ice.confg.js**
+
+```js
+const path = require('path');
+
+module.exports = {
+  // basic options. see https://ice.work/docs/cli/config/config for more infomation
+  entry: 'src/index.js',
+  publicPath: './',
+  alias: {
+    '@components': path.resolve(__dirname, 'src/components/')
+  },
+  // ...
+
+  // see https://ice.work/docs/cli/plugin-list/fusion for more infomation
+  plugins: [
+    ['ice-plugins-fusion', { themePackage: '@icedesign/theme' }],
+  ],
+
+  // modify webpack configuration via webpack-chain
+  chainWebpack: (config) => {
+    config.devServer.hot(true);
+  }
+}
+```
 
 ## Contributors
 
