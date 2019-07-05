@@ -49,7 +49,7 @@ $ npm run build
 
 `ice-scripts` 提供了开箱即用的能力支持，如果项目需要自定义配置，可以在项目跟目录下创建 `ice.config.js`。`ice-scripts` 将自动进行加载。
 
-**ice.confg.js**
+**ice.config.js**
 
 ```js
 const path = require('path');

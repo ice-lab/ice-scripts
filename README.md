@@ -48,9 +48,9 @@ Builds the app for prodution.
 
 ## Configuration
 
-Out of the box, `ice-scripts` won't require you to use a configuration file. If you need to customize your project confg, you can create a `ice.config.js` file in the root folder and `ice-scripts` will automatically use it.
+Out of the box, `ice-scripts` won't require you to use a configuration file. If you need to customize your project config, you can create a `ice.config.js` file in the root folder and `ice-scripts` will automatically use it.
 
-**ice.confg.js**
+**ice.config.js**
 
 ```js
 const path = require('path');
