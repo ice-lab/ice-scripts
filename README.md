@@ -1,3 +1,5 @@
+English | [简体中文](./README_zh-CN.md)
+
 # ice-scripts
 
 [![NPM version](https://img.shields.io/npm/v/ice-scripts.svg?style=flat)](https://npmjs.org/package/ice-scripts)
