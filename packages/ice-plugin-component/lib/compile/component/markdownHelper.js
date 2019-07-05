@@ -11,8 +11,6 @@ const bableCompile = require('./bableCompile');
 
 const renderer = new marked.Renderer();
 
-let importStyle = false;
-
 // css 注入到页面中
 const styleTemplate = '<style>%s</style>';
 const codeTemplate = `
@@ -30,10 +28,8 @@ renderer.code = function (code, lang) {
   }
   const html = prismjs.highlight(code, prismjs.languages[lang] || prismjs.languages.html);
 
-  if (importStyle) {
-    if (lang === 'css' || lang === 'style') {
-      return util.format(styleTemplate, code);
-    }
+  if (lang === 'css' || lang === 'style') {
+    return util.format(styleTemplate, code);
   }
   return util.format(codeTemplate, lang, lang, html);
 };
@@ -88,8 +84,6 @@ exports.parseMarkdownParts = function parseMarkdownParts(babelConfig) {
       result.meta = yaml.safeLoad(splited[0]);
       result.content = splited[1];
     }
-
-    importStyle = !!result.meta.importStyle;
 
     if (options.sliceCode) {
       const JSX_REG = /(````)(?:jsx?)([^\1]*?)(\1)/g;
