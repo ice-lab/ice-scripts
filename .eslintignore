@@ -10,7 +10,6 @@ coverage/
 **/*.min.js
 
 # 忽略 packages 部分包
-# packages/ice-npm-utils
 packages/clean-css-parallel
 packages/css-prefix-plugin
 packages/extract-css-assets-webpack-plugin
