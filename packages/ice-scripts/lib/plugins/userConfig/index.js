@@ -1,5 +1,5 @@
-const log = require('../../utils/log');
 const chalk = require('chalk');
+const log = require('../../utils/log');
 
 module.exports = (api) => {
   const { userConfig = {} } = api.context;

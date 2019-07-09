@@ -1,13 +1,14 @@
 const path = require('path');
 const fse = require('fs-extra');
 const assert = require('assert');
+const deepmerge = require('deepmerge');
+
 const log = require('../utils/log');
 const getPkgData = require('../config/getPackageJson');
 const getDefaultWebpackConfig = require('../config/getDefaultWebpackConfig');
 const processEntry = require('../config/processEntry');
 const PluginAPI = require('./Plugin');
 const defaultConfig = require('../config/default.config');
-const deepmerge = require('deepmerge');
 
 module.exports = class Context {
   constructor({ command = '', rootDir = process.cwd(), args = {} }) {
