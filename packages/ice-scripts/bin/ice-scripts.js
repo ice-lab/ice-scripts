@@ -17,7 +17,7 @@ const validationSassAvailable = require('../lib/utils/validationSassAvailable');
     .usage('<command> [options]')
     .command('build', 'build project')
     .command('dev', 'start server')
-    .command('test', 'run tests with jest');
+    .command('test <regexForTestFiles>', 'run tests with jest');
 
   program.parse(process.argv);
 
