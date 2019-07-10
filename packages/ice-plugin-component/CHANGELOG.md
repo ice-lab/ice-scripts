@@ -2,6 +2,10 @@
 
 ## 0.1.3
 
+ - [fix] format resolve path in Windows
+
+## 0.1.3
+
  - [fix] remove option importStyle in Demo markdown
  - [fix] fix RegExp of match sass import statement
 
