@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.9
+
+- [fix] 多主题切换函数 `__changeTheme__` 前置注入
+
+## 0.1.8
+
+- [fix] 修复 1.x 组件主题 icon 编译问题
+
 ## 0.1.7
 
 - [feat] themePackage 支持多主题切换
