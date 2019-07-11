@@ -67,7 +67,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
         // add theme.js to entry
         const entryNames = Object.keys(config.entryPoints.entries());
         entryNames.forEach((name) => {
-          config.entry(name).add(jsPath);
+          config.entry(name).prepend(jsPath);
         });
       } catch (err) {
         log.error('fail to add theme.js to entry');
