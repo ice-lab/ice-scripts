@@ -1,8 +1,9 @@
 # Changelog
 
-## 0.1.3
+## 0.1.4
 
  - [fix] format resolve path in Windows
+ - [fix] modify demo display style
 
 ## 0.1.3
 

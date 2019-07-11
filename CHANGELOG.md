@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.4
+
+- [feat] 支持 `ice-scripts test <regexForTestFiles>` 指定测试文件
+- [fix] 修复 node-sass 依赖检查错误时进程退出问题
+
 ## 2.1.3
 
 - [feat] 支持 ice-scripts test 命令
