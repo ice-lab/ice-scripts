@@ -23,6 +23,9 @@ program
       jestArgv[`${jestKey[0].toLowerCase()}${jestKey.slice(1)}`] = rawArgv[key];
     }
   });
+  if (program.args && program.args.length > 0) {
+    jestArgv.regexForTestFiles = program.args;
+  }
   try {
     await new Context({
       command: 'test',

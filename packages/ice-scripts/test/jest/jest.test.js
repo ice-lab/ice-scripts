@@ -13,4 +13,8 @@ describe('jest test', () => {
     execSync('cd test/jest/customConfig && node ../../../bin/ice-scripts-test.js');
     expect(1).toBe(1);
   });
+  test('specify regexForTestFiles', () => {
+    execSync('cd test/jest/testFiles && node ../../../bin/ice-scripts-test.js **/test.e2e.js');
+    expect(1).toBe(1);
+  });
 });
