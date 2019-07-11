@@ -43,5 +43,14 @@ module.exports = ({ context, chainWebpack }) => {
 
     // delete CopyWebpackPlugin
     config.plugins.delete('CopyWebpackPlugin');
+
+    // add exclude rule for compile template/index.js
+    ['jsx', 'tsx'].forEach((rule) => {
+      config.module
+        .rule(rule)
+        .exclude
+        .clear()
+        .add(/node_modules\/((?!ice-plugin-block\/lib\/template\/index.js).)+/);
+    });
   });
 };
