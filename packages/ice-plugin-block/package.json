@@ -1,0 +1,11 @@
+{
+  "name": "ice-plugin-block",
+  "version": "0.1.0",
+  "description": "ice-scripts plugin for block development",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"test\""
+  },
+  "author": "",
+  "license": "ISC"
+}
