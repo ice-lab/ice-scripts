@@ -1,6 +1,7 @@
 const path = require('path');
 const generateEntryJs = require('../utils/generateEntryJs');
 const setAssetsPath = require('../utils/setAssetsPath');
+const formatPathForWin = require('../utils/formatPathForWin');
 
 module.exports = (config, { demos, demoDir, hasAdaptor, rootDir }) => {
   // remove HtmlWebpackPlugin when run dev
@@ -18,9 +19,9 @@ module.exports = (config, { demos, demoDir, hasAdaptor, rootDir }) => {
       filename: 'adaptor-index.js',
       rootDir,
       params: {
-        adaptor: path.resolve(rootDir, 'adaptor/index.js'),
-        adaptorGenerate: path.resolve(rootDir, 'node_modules/@alifd/adaptor-generate'),
-        style: path.resolve(rootDir, 'src/main.scss'),
+        adaptor: formatPathForWin(path.resolve(rootDir, 'adaptor/index.js')),
+        adaptorGenerate: formatPathForWin(path.resolve(rootDir, 'node_modules/@alifd/adaptor-generate')),
+        style: formatPathForWin(path.resolve(rootDir, 'src/main.scss')),
       },
     })];
   }
