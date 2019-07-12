@@ -14,7 +14,7 @@ module.exports = ({ context, chainWebpack }) => {
     // add custom entry file
     config.merge({
       entry: {
-        index: [require.resolve('./template/index.js')],
+        index: [require.resolve('./template/ice.block.entry.js')],
       },
     });
 
@@ -44,13 +44,13 @@ module.exports = ({ context, chainWebpack }) => {
     // delete CopyWebpackPlugin
     config.plugins.delete('CopyWebpackPlugin');
 
-    // add exclude rule for compile template/index.js
+    // add exclude rule for compile template/ice.block.entry.js
     ['jsx', 'tsx'].forEach((rule) => {
       config.module
         .rule(rule)
         .exclude
         .clear()
-        .add(/node_modules\/((?!ice-plugin-block\/lib\/template\/index.js).)+/);
+        .add(/node_modules(?!.+ice.block.entry.js)/);
     });
   });
 };
