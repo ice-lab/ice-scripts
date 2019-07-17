@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const FilterWarningsPlugin = require('webpack-filter-warnings-plugin');
 const SimpleProgressPlugin = require('webpack-simple-progress-plugin');
+const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -29,7 +30,7 @@ module.exports = (chainConfig, mode = 'development') => {
       }])
       .end()
     .plugin('SimpleProgressPlugin')
-      .use(SimpleProgressPlugin)
+      .use(!process.stderr.isTTY ? ProgressPlugin : SimpleProgressPlugin)
       .end()
     .plugin('CaseSensitivePathsPlugin')
       .use(CaseSensitivePathsPlugin)
