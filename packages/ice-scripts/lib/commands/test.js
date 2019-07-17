@@ -4,10 +4,10 @@ const jest = require('jest');
 
 module.exports = (context) => {
   const { commandArgs: { jestArgv }, rootDir, webpackConfig } = context;
-
+  const { config, regexForTestFiles, ...restArgv } = jestArgv;
   // get user jest config
-  const jestConfigPath = jestArgv.config
-    ? path.join(rootDir, jestArgv.config)
+  const jestConfigPath = config
+    ? path.join(rootDir, config)
     : path.join(rootDir, 'jest.config.js');
   let userJestConfig = {};
   if (fs.existsSync(jestConfigPath)) {
@@ -47,12 +47,13 @@ module.exports = (context) => {
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     testPathIgnorePatterns: ['/node_modules/'],
     ...userJestConfig,
+    ...(regexForTestFiles ? { testMatch: regexForTestFiles } : {}),
   };
 
   return new Promise((resolve, reject) => {
     jest.runCLI(
       {
-        ...jestArgv,
+        ...restArgv,
         config: JSON.stringify(jestConfig),
       },
       [rootDir],

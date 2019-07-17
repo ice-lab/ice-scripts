@@ -12,6 +12,6 @@ module.exports = function () {
     console.log(colors.green('Info:'), '您可以尝试执行以下命令重装修复:');
     console.log('    ', colors.magenta('npm install node-sass'));
     console.log('');
-    throw err;
+    process.exit(1);
   }
 };
