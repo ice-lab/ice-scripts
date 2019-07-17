@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.5
+
+- [feat] 支持非终端场景下构建日志的输出
+
 ## 2.1.4
 
 - [feat] 支持 `ice-scripts test <regexForTestFiles>` 指定测试文件
