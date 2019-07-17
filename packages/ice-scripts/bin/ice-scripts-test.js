@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 const program = require('commander');
+const parse = require('yargs-parser');
+
 const getCliOptions = require('../lib/utils/getCliOptions');
 const Context = require('../lib/core/Context');
 const log = require('../lib/utils/log');
-const parse = require('yargs-parser');
 
 program
   .allowUnknownOption() // allow jest config
