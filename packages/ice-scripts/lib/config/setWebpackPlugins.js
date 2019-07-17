@@ -30,6 +30,7 @@ module.exports = (chainConfig, mode = 'development') => {
       }])
       .end()
     .plugin('SimpleProgressPlugin')
+      // SimpleProgressPlugin will not write webpack info to stderr when it is not tty
       .use(!process.stderr.isTTY ? ProgressPlugin : SimpleProgressPlugin)
       .end()
     .plugin('CaseSensitivePathsPlugin')
