@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 const program = require('commander');
-const packageInfo = require('../package.json');
 const updater = require('update-notifier');
+const packageInfo = require('../package.json');
 const checkNodeVersion = require('../lib/utils/checkNodeVersion');
 const validationSassAvailable = require('../lib/utils/validationSassAvailable');
 
