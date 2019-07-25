@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = ({ chainWebpack }) => {
   // Babel plugins for JSX+
   const plugins = [
@@ -16,7 +18,6 @@ module.exports = ({ chainWebpack }) => {
         .use('babel-loader')
         .tap((options) => {
           plugins.forEach(plugin => {
-            console.log(plugin);
             if (typeof plugin === 'string') {
               options.plugins.push(require.resolve(plugin));
             } else if (Array.isArray(plugin)) {
@@ -30,5 +31,11 @@ module.exports = ({ chainWebpack }) => {
           return options;
         });
     });
+
+    // add resolve modules for babel-runtime-jsx-plus
+    const runtimePath = require.resolve('babel-runtime-jsx-plus');
+    const pathArr = runtimePath.split('node_modules');
+    pathArr.pop(); // pop file path
+    config.resolve.modules.add(path.join(pathArr.join('node_modules'), 'node_modules'));
   });
 };
