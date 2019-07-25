@@ -1,6 +1,6 @@
 {
   "name": "ice-plugin-jsx-plus",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ice plugin for jsx plus",
   "main": "index.js",
   "scripts": {
