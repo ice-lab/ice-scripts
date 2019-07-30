@@ -50,7 +50,7 @@ module.exports = async function (context, subprocess) {
         rootDir,
         kit: 'ice-scripts',
         kitVersion: pkgData.version,
-        cmdType: process.stderr.isTTY ? 'dev' : 'icework-dev',
+        cmdType: process.stderr.isTTY ? 'dev' : 'nontty-dev',
       });
     } catch (err) {
       log.warn('collectDetail error', err);

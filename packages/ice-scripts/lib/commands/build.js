@@ -36,7 +36,7 @@ module.exports = async function (context) {
         rootDir,
         kit: 'ice-scripts',
         kitVersion: iceScriptsPkgData.version,
-        cmdType: process.stderr.isTTY ? 'build' : 'icework-build',
+        cmdType: process.stderr.isTTY ? 'build' : 'nontty-build',
       });
     } catch (err) {
       log.warn('collectDetail error', err);
