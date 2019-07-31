@@ -35,7 +35,6 @@ module.exports = ({ chainWebpack, context }, injectBabel) => {
         rule.include.add(path.resolve(rootDir, entries[key][0]));
       });
       rule.use('polyfill-loader').loader(require.resolve('../utils/polyfillLoader')).options({});
-      rule.after('jsx');
 
       // add resolve modules for get core-js and regenerator-runtime
       const modulePath = require.resolve('core-js');
