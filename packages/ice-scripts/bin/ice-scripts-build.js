@@ -6,6 +6,8 @@ const log = require('../lib/utils/log');
 
 program
   .option('--config <config>', 'use custom config')
+  .option('--analyzer', '开启构建分析')
+  .option('--analyzer-port', '设置分析端口号')
   .parse(process.argv);
 
 (async () => {
