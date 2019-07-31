@@ -97,7 +97,6 @@ module.exports = class Context {
       config.entryPoints.clear();
       // merge new entry
       config.merge({ entry: processEntry(entry, {
-        polyfill: this.userConfig.injectBabel !== 'runtime',
         hotDev: this.command === 'dev' && !this.commandArgs.disabledReload,
       }) });
     }
