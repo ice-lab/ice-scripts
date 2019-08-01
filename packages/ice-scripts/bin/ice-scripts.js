@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 const program = require('commander');
-const updater = require('update-notifier');
 const packageInfo = require('../package.json');
 const checkNodeVersion = require('../lib/utils/checkNodeVersion');
 const validationSassAvailable = require('../lib/utils/validationSassAvailable');
@@ -10,7 +9,6 @@ const validationSassAvailable = require('../lib/utils/validationSassAvailable');
   // finish check before run command
   checkNodeVersion(packageInfo.engines.node);
   validationSassAvailable();
-  updater({ pkg: packageInfo, shouldNotifyInNpmScript: true }).notify({ defer: true });
 
   program
     .version(packageInfo.version)
