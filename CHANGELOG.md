@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.6
+
+- [fix] remove check latest version of ice-scripts alibaba/ice#2517
+- [fix] modify collect params
+- [fix] use core-js and regenerator-runtime instead of @babel/polyfill
+- [feat] ice-plugin-jsx-plus for support jsx+
+
 ## 2.1.5
 
 - [feat] 支持非终端场景下构建日志的输出
