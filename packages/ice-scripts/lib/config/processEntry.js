@@ -51,10 +51,5 @@ module.exports = (entry, options = {}) => {
     entries = enhanceEntries(entries, hotDevClientPath);
   }
 
-  // Note：https://github.com/alibaba/ice/pull/834
-  if (options.polyfill) {
-    entries = enhanceEntries(entries, require.resolve('@babel/polyfill'));
-  }
-
   return entries;
 };

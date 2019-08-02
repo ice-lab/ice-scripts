@@ -29,7 +29,7 @@ module.exports = (context) => {
   // generate default jest config
   const jestConfig = {
     rootDir,
-    setupFiles: [require.resolve('@babel/polyfill')],
+    setupFiles: [require.resolve('../config/jest/shim.js')],
     testMatch: ['**/?*.(spec|test).(j|t)s?(x)'],
     transform: {
       '^.+\\.(js|jsx|ts|tsx)$': require.resolve('../config/jest/babelTransform.js'),

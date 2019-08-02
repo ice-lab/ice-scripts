@@ -1,0 +1,24 @@
+{
+  "name": "ice-plugin-jsx-plus",
+  "version": "0.1.1",
+  "description": "ice plugin for jsx plus",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"test\""
+  },
+  "keywords": [
+    "ice",
+    "ice-plugin"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "babel-plugin-transform-jsx-class": "^0.1.2",
+    "babel-plugin-transform-jsx-condition": "^0.1.1",
+    "babel-plugin-transform-jsx-fragment": "^0.1.1",
+    "babel-plugin-transform-jsx-list": "^0.1.0",
+    "babel-plugin-transform-jsx-memo": "^0.1.2",
+    "babel-plugin-transform-jsx-slot": "^0.1.1",
+    "babel-runtime-jsx-plus": "^0.1.3"
+  }
+}

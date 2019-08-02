@@ -42,7 +42,6 @@ describe('init context', () => {
     const webpackConfig = context.getWebpackConfig();
     expect(webpackConfig.resolve.extensions).toEqual(['.js', '.jsx', '.json', '.html', '.ts', '.tsx']);
     expect(webpackConfig.entry.index).toEqual([
-      require.resolve('@babel/polyfill'),
       path.resolve(process.cwd(), 'src/index.js'),
     ]);
     done();

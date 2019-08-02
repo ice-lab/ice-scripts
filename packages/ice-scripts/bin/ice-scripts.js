@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const program = require('commander');
 const packageInfo = require('../package.json');
-const checkUpdater = require('../lib/utils/checkUpdater');
 const checkNodeVersion = require('../lib/utils/checkNodeVersion');
 const validationSassAvailable = require('../lib/utils/validationSassAvailable');
 
@@ -10,7 +9,6 @@ const validationSassAvailable = require('../lib/utils/validationSassAvailable');
   // finish check before run command
   checkNodeVersion(packageInfo.engines.node);
   validationSassAvailable();
-  await checkUpdater();
 
   program
     .version(packageInfo.version)
