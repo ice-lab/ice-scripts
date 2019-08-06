@@ -89,19 +89,6 @@ module.exports = class Context {
     }
   }
 
-  // process entry
-  processWepackEntry(config) {
-    const entry = config.toConfig().entry;
-    if (entry) {
-      // delete origin entry
-      config.entryPoints.clear();
-      // merge new entry
-      config.merge({ entry: processEntry(entry, {
-        hotDev: this.command === 'dev' && !this.commandArgs.disabledReload,
-      }) });
-    }
-  }
-
   async applyHook(key, opts = {}) {
     const hooks = this.eventHooks[key] || [];
     const results = [];
@@ -140,7 +127,10 @@ module.exports = class Context {
       }
     }
     // add polyfill/hotdev before origin entry
-    this.processWepackEntry(config);
+    processEntry(config, {
+      hotDev: this.command === 'dev' && !this.commandArgs.disabledReload,
+      polyfill: this.userConfig.injectBabel === 'polyfill',
+    });
     return config.toConfig();
   }
 
