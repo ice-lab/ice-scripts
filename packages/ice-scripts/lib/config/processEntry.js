@@ -55,7 +55,7 @@ module.exports = (config, options = {}) => {
         // filter node_modules file add by plugin
         if (!/node_modules/.test(entries[key][i])) {
           rule.include.add(entries[key][i]);
-          return;
+          break;
         }
       }
     });
