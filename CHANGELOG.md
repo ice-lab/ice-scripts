@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.7
+
+- [fix] add polyfill when entry modified by plugin
+- [fix] require modules in shim file
+- [feat] support css localize in dev mode
+
 ## 2.1.6
 
 - [fix] remove check latest version of ice-scripts alibaba/ice#2517
