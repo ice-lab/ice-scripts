@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.8
+
+- [fix] add polyfill when entry path include node_modules
+
 ## 2.1.7
 
 - [fix] add polyfill when entry modified by plugin
