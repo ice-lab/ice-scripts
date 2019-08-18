@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.9
+
+- [fix] lock less verison to 3.9.0 less/less.js#3414
+
 ## 2.1.8
 
 - [fix] add polyfill when entry path include node_modules
