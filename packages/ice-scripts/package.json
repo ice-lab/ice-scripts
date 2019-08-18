@@ -68,7 +68,7 @@
     "identity-obj-proxy": "^3.0.0",
     "inquirer": "^6.4.1",
     "jest": "^24.8.0",
-    "less": "^3.8.1",
+    "less": "~3.9.0",
     "less-loader": "^4.1.0",
     "lodash": "^4.17.11",
     "lodash.clonedeep": "^4.5.0",
