@@ -4,7 +4,7 @@
   "description": "resolve sass import",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"test\""
   },
   "keywords": [
     "sass"

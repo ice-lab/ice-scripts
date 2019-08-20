@@ -2,6 +2,13 @@ const path = require('path');
 const resolveSassImport = require('resolve-sass-import');
 const nodeSass = require('node-sass');
 
+// regex for match sass variables like:
+// $color-calculate-xxxx: transparentize($search-simple-dark-bg-color, 1 - $search-simple-dark-bg-opacity) !default;
+const SASS_REGEX = /\$color-calculate[\w-]+?:[\s\S]+?;/g;
+// regex for match css style like:
+// .color-calculate-xxxx {color: rgba(0, 0, 0, 1);}
+const CSS_REGEX = /\.color-calculate[\w\s-]+?\{[\s\S]+?\}/g;
+
 module.exports = (variablesPath, themeFile, themeConfig) => {
   let variablesContent = '';
   try {
@@ -13,7 +20,7 @@ module.exports = (variablesPath, themeFile, themeConfig) => {
   if (variablesContent) {
     // get all calculate colors by prefix color-calculate
     const calcKeys = [];
-    const calcSass = variablesContent.match(/\$color-calculate[\w-]+?:[\s\S]+?;/g);
+    const calcSass = variablesContent.match(SASS_REGEX);
     // get calculate keys
     calcSass.forEach((item) => {
       const [key] = item.split(':');
@@ -37,7 +44,7 @@ ${calcKeys.map((key) => {
 
     // get calculated css value
     const calcVars = {};
-    const calcCss = cssContet.match(/\.color-calculate[\w\s-]+?\{[\s\S]+?\}/g);
+    const calcCss = cssContet.match(CSS_REGEX);
     calcCss.forEach((item) => {
       const [key, value] = item.split('{');
       calcVars[key.replace(/\.|\{/g, '').trim()] = value.replace(/;|\}/g, '').trim();
