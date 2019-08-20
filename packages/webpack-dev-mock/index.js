@@ -6,6 +6,7 @@ const chokidar = require('chokidar');
 const path = require('path');
 const proxy = require('express-http-proxy');
 const url = require('url');
+const fs = require('fs');
 
 const winPath = function(path) {
   return path.replace(/\\/g, '/');
@@ -17,7 +18,8 @@ let error = null;
 const cwd = process.cwd();
 const mockDir = path.join(cwd, 'mock');
 const configFile = path.join(cwd, 'mock', 'index.js');
-
+// TODO: ts 环境下 创建 .ts 文件找不到文件
+const configFileTs = path.join(cwd, 'mock', 'index.ts');
 function getConfig() {
   if (existsSync(configFile)) {
     // disable require cache
@@ -28,8 +30,17 @@ function getConfig() {
       }
     });
     return require(configFile);
+  } else if (existsSync(configFileTs)) {
+    // TODO: 兼容 index.ts 文件
+    Object.keys(require.cache).forEach((file) => {
+      if (file === configFile || file.indexOf(mockDir) > -1) {
+        debug(`delete cache ${file}`);
+        delete require.cache[file];
+      }
+    });
+    return require(configFile);
   } else {
-    return {};
+    return {}
   }
 }
 
