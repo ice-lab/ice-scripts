@@ -54,7 +54,6 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
         if (variablesPath) {
           calcVars = getCalcVars(variablesPath, themePath, configData);
         }
-        console.log('calcVars', calcVars);
         try {
           themeVars = getThemeVars(themePath, Object.assign({}, calcVars, configData ));
         } catch (err) {
