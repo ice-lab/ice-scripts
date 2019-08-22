@@ -21,6 +21,7 @@ module.exports = (varsPath, themePath, themeConfig) => {
     // get all calculate colors by prefix color-calculate
     const calcKeys = [];
     const calcSass = variablesContent.match(SASS_REGEX);
+    if (!calcSass) return {};
     // get calculate keys
     calcSass.forEach((item) => {
       const [key] = item.split(':');
@@ -45,11 +46,12 @@ ${calcKeys.map((key) => {
     // get calculated css value
     const calcVars = {};
     const calcCss = cssContent.match(CSS_REGEX);
-    calcCss.forEach((item) => {
-      const [key, value] = item.split('{');
-      calcVars[key.replace(/\.|\{/g, '').trim()] = value.replace(/;|\}/g, '').trim();
-    });
-
+    if (calcCss) {
+      calcCss.forEach((item) => {
+        const [key, value] = item.split('{');
+        calcVars[key.replace(/\.|\{/g, '').trim()] = value.replace(/;|\}/g, '').trim();
+      });
+    }
     return calcVars;
   }
   return {};
