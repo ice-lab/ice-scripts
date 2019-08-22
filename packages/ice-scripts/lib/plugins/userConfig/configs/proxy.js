@@ -22,7 +22,7 @@ module.exports = ({ chainWebpack }, proxyConfig) => {
           }
           proxyRes.headers['x-proxy-target-path'] = distTarget + req.url;
         },
-        onError: function(err, req, res) {
+        onError: function onError(err, req, res) {
           // proxy server error can't trigger onProxyRes
           res.writeHead(500, {
             'x-proxy-by': 'ice-proxy',
@@ -30,7 +30,7 @@ module.exports = ({ chainWebpack }, proxyConfig) => {
             'x-proxy-target': target,
           });
           res.end(`proxy server error: ${err.message}`);
-        }
+        },
       }, proxyRule, { context: match });
     }
     return false;
