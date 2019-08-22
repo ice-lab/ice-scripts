@@ -41,9 +41,9 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
     let defaultTheme = '';
     if (Array.isArray(themePackage)) {
       const themesCssVars = {};
-      let variablesPath = path.join(rootDir, 'node_modules', '@alifd/next/variables.scss');
-      if (!fs.existsSync(variablesPath)) {
-        variablesPath = false;
+      let varsPath = path.join(rootDir, 'node_modules', '@alifd/next/variables.scss');
+      if (!fs.existsSync(varsPath)) {
+        varsPath = false;
       }
       // get scss variables and generate css variables
       themePackage.forEach(({ name, ...themeData }) => {
@@ -51,8 +51,8 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
         const configData = themeData.themeConfig || {};
         let themeVars = {};
         let calcVars = {};
-        if (variablesPath) {
-          calcVars = getCalcVars(variablesPath, themePath, configData);
+        if (varsPath) {
+          calcVars = getCalcVars(varsPath, themePath, configData);
         }
         try {
           themeVars = getThemeVars(themePath, Object.assign({}, calcVars, configData ));

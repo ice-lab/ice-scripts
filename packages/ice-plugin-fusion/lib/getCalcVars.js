@@ -9,10 +9,10 @@ const SASS_REGEX = /\$color-calculate[\w-]+?:[\s\S]+?;/g;
 // .color-calculate-xxxx {color: rgba(0, 0, 0, 1);}
 const CSS_REGEX = /\.color-calculate[\w\s-]+?\{[\s\S]+?\}/g;
 
-module.exports = (variablesPath, themeFile, themeConfig) => {
+module.exports = (varsPath, themePath, themeConfig) => {
   let variablesContent = '';
   try {
-    variablesContent = resolveSassImport(variablesPath, path.dirname(variablesPath));
+    variablesContent = resolveSassImport(varsPath, path.dirname(varsPath));
   } catch (err) {
     throw err;
   }
@@ -27,8 +27,8 @@ module.exports = (variablesPath, themeFile, themeConfig) => {
       calcKeys.push(key.slice(1).trim());
     });
     // create sass content
-    const sassContent = `@import '${variablesPath}';
-@import '${themeFile}';
+    const sassContent = `@import '${varsPath}';
+@import '${themePath}';
 ${Object.keys(themeConfig).map((key) => {
   const value = themeConfig[key];
   return `$${key}: ${value};`;
@@ -38,13 +38,13 @@ ${calcKeys.map((key) => {
   return `.${key}{color: $${key};}`;
 }).join('\n')}`;
     // compile sass content to css
-    const cssContet = nodeSass.renderSync({
+    const cssContent = nodeSass.renderSync({
       data: sassContent,
     }).css.toString('utf8');
 
     // get calculated css value
     const calcVars = {};
-    const calcCss = cssContet.match(CSS_REGEX);
+    const calcCss = cssContent.match(CSS_REGEX);
     calcCss.forEach((item) => {
       const [key, value] = item.split('{');
       calcVars[key.replace(/\.|\{/g, '').trim()] = value.replace(/;|\}/g, '').trim();
