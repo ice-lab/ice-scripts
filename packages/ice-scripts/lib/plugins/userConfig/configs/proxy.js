@@ -6,7 +6,7 @@ module.exports = ({ chainWebpack }, proxyConfig) => {
   const proxy = proxyRules.map(([match, opts]) => {
     // set enable false to disable proxy rule
     const { enable, target, ...proxyRule } = opts;
-    if (enable) {
+    if (enable !== false) {
       return merge({
         target,
         changeOrigin: true,
