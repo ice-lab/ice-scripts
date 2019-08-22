@@ -1,5 +1,6 @@
 const path = require('path');
 const fse = require('fs-extra');
+const clonedeep = require('lodash.clonedeep');
 const { getPkgJSONSync } = require('./utils/pkgJson');
 const getDemoDir = require('./utils/getDemoDir');
 const getDemos = require('./utils/getDemos');
@@ -18,12 +19,14 @@ module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
   const { command, rootDir, reRun } = context;
   const { type = 'fusion' } = opts;
   const pkg = getPkgJSONSync(rootDir);
-  // store babel config
-  let babelConfig;
+  // store webpack chain config
+  let webpackChain;
   // check adaptor folder
   const hasAdaptor = fse.existsSync(path.join(rootDir, 'adaptor')) && type === 'fusion';
 
   chainWebpack((config) => {
+    // expose config
+    webpackChain = config;
     // add @babel/plugin-transform-runtime
     // @babel/preset-env modules: commonjs
     configBabel(config, {
@@ -49,7 +52,7 @@ module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
       ],
     });
     // get babel config for component compile
-    babelConfig = config.module.rule('jsx').use('babel-loader').get('options');
+    const babelConfig = clonedeep(config.module.rule('jsx').use('babel-loader').get('options'));
     // babel option do not known cacheDirectory
     delete babelConfig.cacheDirectory;
 
@@ -76,6 +79,9 @@ module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
     // build src and umd adpator after demo build
     onHook('afterBuild', () => {
       process.env.BUILD_AGAIN = true;
+      // get babel config after all plugin had been excuted
+      const babelConfig = clonedeep(webpackChain.module.rule('jsx').use('babel-loader').get('options'));
+      delete babelConfig.cacheDirectory;
       // component buildSrc
       buildSrc({ babelConfig, rootDir, log });
       modifyPkgHomePage(pkg, rootDir);
