@@ -34,7 +34,7 @@ const cssModuleLoaderOpts = {
 module.exports = (chainConfig, mode = 'development') => {
   const babelConfig = getBabelConfig();
 
-  function setExtralCSSLoader(lang, loaders) {
+  function setExtraCSSLoader(lang, loaders) {
     const moduleTestReg = new RegExp(`\\.module\\.${lang}$`);
     const cssTestReg = new RegExp(`\\.${lang}$`);
 
@@ -88,15 +88,15 @@ module.exports = (chainConfig, mode = 'development') => {
   }
 
   // css loader
-  setExtralCSSLoader('css');
-  setExtralCSSLoader('scss', [['sass-loader', SASS_LOADER, {}]]);
-  setExtralCSSLoader('less', [['less-loader', LESS_LOADER, { sourceMap: true, javascriptEnabled: true }]]);
+  setExtraCSSLoader('css');
+  setExtraCSSLoader('scss', [['sass-loader', SASS_LOADER, {}]]);
+  setExtraCSSLoader('less', [['less-loader', LESS_LOADER, { sourceMap: true, javascriptEnabled: true }]]);
 
   // assets loader
-  setAssetsLoader('woff2', /\.woff2?$/, { minetype: 'application/font-woff' });
-  setAssetsLoader('ttf', /\.ttf$/, { minetype: 'application/octet-stream' });
-  setAssetsLoader('eot', /\.eot$/, { minetype: 'application/vnd.ms-fontobject' });
-  setAssetsLoader('svg', /\.svg$/, { minetype: 'image/svg+xml' });
+  setAssetsLoader('woff2', /\.woff2?$/, { mimetype: 'application/font-woff' });
+  setAssetsLoader('ttf', /\.ttf$/, { mimetype: 'application/octet-stream' });
+  setAssetsLoader('eot', /\.eot$/, { mimetype: 'application/vnd.ms-fontobject' });
+  setAssetsLoader('svg', /\.svg$/, { mimetype: 'image/svg+xml' });
   setAssetsLoader('img', /\.(png|jpg|jpeg|gif)$/i);
 
   // jsx loader

@@ -1,9 +1,9 @@
 /* eslint-disable indent */
 const webpack = require('webpack');
-const getBaseCofing = require('./webpack.base.js');
+const getBaseConfig = require('./webpack.base.js');
 
 module.exports = () => {
-  const baseConfig = getBaseCofing('development');
+  const baseConfig = getBaseConfig('development');
 
   // set source map
   baseConfig.devtool('cheap-module-source-map');
