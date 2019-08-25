@@ -16,7 +16,9 @@ const debug = require('debug')('ice:mock');
 let error = null;
 const cwd = process.cwd();
 const mockDir = path.join(cwd, 'mock');
-const configFile = path.join(cwd, 'mock', 'index.js');
+const jsConfigFile = path.join(cwd, 'mock', 'index.js');
+const tsConfigFile = path.join(cwd, 'mock', 'index.ts');
+const configFile = existsSync(tsConfigFile) ? tsConfigFile : jsConfigFile;
 
 function getConfig() {
   if (existsSync(configFile)) {
