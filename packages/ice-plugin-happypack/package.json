@@ -1,0 +1,11 @@
+{
+  "name": "ice-plugin-happypack",
+  "version": "1.0.0",
+  "description": "ice plugin that uses HappyPack",
+  "main": "index.js",
+  "author": "tanhengyeow",
+  "license": "ISC",
+  "dependencies": {
+    "happypack": "^5.0.1"
+  }
+}
