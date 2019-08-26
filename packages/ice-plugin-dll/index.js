@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const buildDll = require('./lib/buildDll');
 
 module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
-  const { rootDir, command, pkg, userConfig } = context;
+  const { rootDir, command, pkg } = context;
   const { dev, build } = dllOptions;
   if ((command === 'dev' && dev) || (command === 'build' && build)) {
     const defaultAppHtml = path.join(rootDir, 'public', 'index.html');
@@ -35,15 +35,7 @@ module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
           }]]);
 
       // Handle multi entry config
-      const value = userConfig.entry;
-      let entry;
-      if (Array.isArray(value) || typeof value === 'string') {
-        entry = {
-          index: value,
-        };
-      } else if (Object.prototype.toString.call(value) === '[object Object]') {
-        entry = value;
-      }
+      const entry = config.toConfig().entry;
       const entryNames = Object.keys(entry);
       const isMultiEntry = entryNames.length > 1;
 
@@ -60,8 +52,6 @@ module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
         // generate multiple html file
         // webpack-chain entry must be [name]: [...values]
         entryNames.forEach((entryName) => {
-          const entryValue = entry[entryName];
-          entry[entryName] = typeof entryValue === 'string' ? [entryValue] : entryValue;
           if (isMultiEntry) {
             const pluginKey = `HtmlWebpackPlugin_${entryName}`;
             config
