@@ -1,6 +1,5 @@
 const webpack = require('webpack');
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const buildDll = require('./lib/buildDll');
 
 module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
@@ -39,13 +38,7 @@ module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
       const entryNames = Object.keys(entry);
       const isMultiEntry = entryNames.length > 1;
 
-      let pluginConfig = {};
       if (isMultiEntry) {
-        pluginConfig = {
-          ...config
-            .plugin('HtmlWebpackPlugin')
-              .get('args')[0],
-        };
         // remove default HtmlWebpackPlugin
         config.plugins.delete('HtmlWebpackPlugin');
 
@@ -56,11 +49,8 @@ module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
             const pluginKey = `HtmlWebpackPlugin_${entryName}`;
             config
               .plugin(pluginKey)
-                .use(HtmlWebpackPlugin, [{
-                  ...pluginConfig,
-                  excludeChunks: entryNames.filter((n) => n !== entryName),
-                  filename: `${entryName}.html`,
-                  inject: true,
+                .tap(([options]) => [{
+                  ...options,
                   template: join('node_modules', 'plugin-dll', 'public', 'index.html'),
                 }]);
           }
