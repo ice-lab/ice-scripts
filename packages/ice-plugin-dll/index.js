@@ -3,9 +3,9 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const buildDll = require('./lib/buildDll');
 
-module.exports = async ({ chainWebpack, context, log }, options = {}) => {
+module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
   const { rootDir, command, pkg, userConfig } = context;
-  const { dev, build } = options;
+  const { dev, build } = dllOptions;
   if ((command === 'dev' && dev) || (command === 'build' && build)) {
     const defaultAppHtml = path.join(rootDir, 'public', 'index.html');
     await buildDll(rootDir, pkg.dependencies, defaultAppHtml, log);
@@ -47,22 +47,39 @@ module.exports = async ({ chainWebpack, context, log }, options = {}) => {
       const entryNames = Object.keys(entry);
       const isMultiEntry = entryNames.length > 1;
 
-      // Add new HtmlWebpackPlugin
+      let pluginConfig = {};
       if (isMultiEntry) {
-        config
-          .plugin('HtmlWebpackPlugin')
-            .use(HtmlWebpackPlugin, [{
-              inject: true,
-              templateParameters: {
-                NODE_ENV: process.env.NODE_ENV,
-              },
-              template: join('node_modules', 'plugin-dll', 'public', 'index.html'),
-              minify: false,
-            }])
+        pluginConfig = {
+          ...config
+            .plugin('HtmlWebpackPlugin')
+              .get('args')[0],
+        };
+        // remove default HtmlWebpackPlugin
+        config.plugins.delete('HtmlWebpackPlugin');
+
+        // generate multiple html file
+        // webpack-chain entry must be [name]: [...values]
+        entryNames.forEach((entryName) => {
+          const entryValue = entry[entryName];
+          entry[entryName] = typeof entryValue === 'string' ? [entryValue] : entryValue;
+          if (isMultiEntry) {
+            const pluginKey = `HtmlWebpackPlugin_${entryName}`;
+            config
+              .plugin(pluginKey)
+                .use(HtmlWebpackPlugin, [{
+                  ...pluginConfig,
+                  excludeChunks: entryNames.filter((n) => n !== entryName),
+                  filename: `${entryName}.html`,
+                  inject: true,
+                  template: join('node_modules', 'plugin-dll', 'public', 'index.html'),
+                }]);
+          }
+        });
       } else { // Use template index.html
         config
           .plugin('HtmlWebpackPlugin')
-            .tap(() => [{
+            .tap(([options]) => [{
+              ...options,
               template: join('node_modules', 'plugin-dll', 'public', 'index.html'),
             }]);
       }
