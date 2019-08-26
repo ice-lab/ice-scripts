@@ -1,0 +1,14 @@
+{
+  "name": "ice-plugin-dll",
+  "version": "1.0.0",
+  "description": "ice plugin that uses Webpack DllPlugin",
+  "main": "index.js",
+  "author": "tanhengyeow",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3"
+  },
+  "peerDependencies": {
+    "webpack": "^4.39.2"
+  }
+}
