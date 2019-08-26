@@ -40,19 +40,23 @@ async function generateDllVendorFile(outputDir, dependencies) {
 async function includeDllInHTML(outputDir, defaultAppHtml, log, rebuild) {
   try {
     const htmlTemplate = path.join(outputDir, 'public', 'index.html');
-    // already generate
-    if (fs.existsSync(htmlTemplate) && !rebuild) {
-      return;
-    }
+    const cssFile = path.join(outputDir, 'public', 'css', 'vendor.css');
+
     // Read html content from default app index.html
     const htmlContent = fs.readFileSync(defaultAppHtml, 'utf-8');
     const $ = cheerio.load(htmlContent);
 
-    // Check if vendor.js is included inside the HTML file
-    if ($('script').length === 1 && $('script')[0].attribs.src === "vendor.js") {
-      return;
+    // add vendor.css
+    if (fs.existsSync(cssFile) && !rebuild) {
+      $('head').append('<link href="css/vendor.css" rel="stylesheet">');
     }
-    $('body').append('<script src="vendor.js"></script>');
+
+    // Check if vendor.js is included inside the HTML file
+    const hasVendor = (Array.from($('script')) || []).some(script => script.attribs.src === 'vendor.dll.js');
+    if (!hasVendor) {
+      $('body').append('<script data-id="dll" src="vendor.dll.js"></script>');
+    }
+    
     fs.writeFileSync(htmlTemplate, $.root().html());
   } catch (err) {
     log.error('Error opening or writing to file');
