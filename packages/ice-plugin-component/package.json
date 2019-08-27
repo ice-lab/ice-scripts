@@ -1,6 +1,6 @@
 {
   "name": "ice-plugin-component",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "ice plugin for develop component",
   "main": "lib/index.js",
   "scripts": {

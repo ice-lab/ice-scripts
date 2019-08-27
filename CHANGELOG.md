@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.1.10
+
+- [fix] refactor mock dev server alibaba/ice#2455 alibaba/ice#2471 alibaba/ice#2462
+- [fix] modular-import did not work with ice-plugin-component alibaba/ice#2724
+- [feat] add dll plugin for ice-scripts
+- [fix] write header for proxy request when error ocur
+- [feat] support calculate color variables for multi-theme alibaba/ice#2715
+
 ## 2.1.9
 
 - [fix] lock less verison to 3.9.0 less/less.js#3414
