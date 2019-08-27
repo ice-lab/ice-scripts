@@ -5,6 +5,7 @@ const chalk = require('chalk');
 const chokidar = require('chokidar');
 const path = require('path');
 const multer = require('multer');
+const debug = require('debug')('ice:mock');
 const matchPath = require('./matchPath');
 
 const OPTIONAL_METHODS = ['get', 'post', 'put', 'patch', 'delete'];
@@ -12,8 +13,6 @@ const OPTIONAL_METHODS = ['get', 'post', 'put', 'patch', 'delete'];
 const winPath = function(path) {
   return path.replace(/\\/g, '/');
 };
-
-const debug = require('debug')('ice:mock');
 
 let error = null;
 const cwd = process.cwd();
@@ -33,6 +32,7 @@ function getConfig() {
         delete require.cache[file];
       }
     });
+    // eslint-disable-next-line import/no-dynamic-require
     return require(configFile);
   } else {
     return {};
