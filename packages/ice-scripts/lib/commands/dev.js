@@ -19,7 +19,7 @@ const pkgData = require('../../package.json');
 const log = require('../utils/log');
 const checkDepsInstalled = require('../utils/checkDepsInstalled');
 
-module.exports = async function (context, subprocess) {
+module.exports = async function(context, subprocess) {
   const { applyHook, commandArgs, rootDir, webpackConfig, pkg } = context;
 
   goldlog('version', {
@@ -31,7 +31,7 @@ module.exports = async function (context, subprocess) {
   await applyHook('beforeDev');
 
   // 与 iceworks 客户端通信
-  const send = function (data) {
+  const send = function(data) {
     iceworksClient.send(data);
     if (subprocess && typeof subprocess.send === 'function') {
       subprocess.send(data);
@@ -73,18 +73,20 @@ module.exports = async function (context, subprocess) {
   // devMock 在 devServer 之前启动
   const originalDevServeBefore = webpackConfig.devServer.before;
   webpackConfig.devServer.before = function(app, server) {
-    // dev mock
-    webpackDevMock(app);
+    if (process.env.MOCK !== 'none') {
+      // dev mock
+      webpackDevMock(app);
+    }
 
     if (typeof originalDevServeBefore === 'function') {
       originalDevServeBefore(app, server);
     }
-  }
+  };
 
   const compiler = webpack(webpackConfig);
   const devServer = new WebpackDevServer(compiler, webpackConfig.devServer);
 
-  compiler.hooks.done.tap('done', (stats) => {
+  compiler.hooks.done.tap('done', stats => {
     if (isInteractive) {
       clearConsole();
     }
@@ -129,9 +131,7 @@ module.exports = async function (context, subprocess) {
       if (stats.stats) {
         log.info('Compiled successfully');
       } else {
-        log.info(
-          `Compiled successfully in ${(json.time / 1000).toFixed(1)}s!`
-        );
+        log.info(`Compiled successfully in ${(json.time / 1000).toFixed(1)}s!`);
       }
 
       // 服务启动完成切没有任务错误与警告
@@ -152,21 +152,17 @@ module.exports = async function (context, subprocess) {
       } else if (messages.warnings.length) {
         log.warn('Compiled with warnings.');
         console.log();
-        messages.warnings.forEach((message) => {
+        messages.warnings.forEach(message => {
           console.log(message);
           console.log();
         });
         // Teach some ESLint tricks.
         console.log('You may use special comments to disable some warnings.');
         console.log(
-          `Use ${chalk.yellow(
-            '// eslint-disable-next-line'
-          )} to ignore the next line.`
+          `Use ${chalk.yellow('// eslint-disable-next-line')} to ignore the next line.`
         );
         console.log(
-          `Use ${chalk.yellow(
-            '/* eslint-disable */'
-          )} to ignore all warnings in a file.`
+          `Use ${chalk.yellow('/* eslint-disable */')} to ignore all warnings in a file.`
         );
         console.log();
       }
@@ -202,7 +198,7 @@ module.exports = async function (context, subprocess) {
     next();
   });
 
-  devServer.listen(PORT, HOST, (err) => {
+  devServer.listen(PORT, HOST, err => {
     if (err) {
       send({
         action: 'update_project',
