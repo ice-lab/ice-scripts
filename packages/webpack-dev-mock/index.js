@@ -4,9 +4,10 @@ const bodyParser = require('body-parser');
 const chalk = require('chalk');
 const chokidar = require('chokidar');
 const path = require('path');
-const pathToRegexp = require('path-to-regexp');
 const multer = require('multer');
-const matchMock = require('./matchMock');
+const matchPath = require('./matchPath');
+
+const OPTIONAL_METHODS = ['get', 'post', 'put', 'patch', 'delete'];
 
 const winPath = function(path) {
   return path.replace(/\\/g, '/');
@@ -25,9 +26,9 @@ function getConfig() {
   if (existsSync(configFile)) {
     // disable require cache
     Object.keys(require.cache).forEach(file => {
-      const withPathFile = withPath(file);
+      const winPathFile = winPath(file);
 
-      if (withPathFile === configFile || withPathFile.indexOf(mockDir) > -1) {
+      if (winPathFile === configFile || winPathFile.indexOf(mockDir) > -1) {
         debug(`delete cache ${file}`);
         delete require.cache[file];
       }
@@ -95,7 +96,7 @@ function realApplyMock(app) {
   });
 
   app.use((req, res, next) => {
-    const match = mockConfig && matchMock(req, mockConfig);
+    const match = mockConfig.length && matchPath(req, mockConfig);
     if (match) {
       debug(`mock matched: [${match.method}] ${match.path}`);
       return match.handler(req, res, next);
@@ -109,46 +110,34 @@ function parseConfig(key, handler) {
   let method = 'get';
   let path = key;
 
-  const keys = [];
   if (key.indexOf(' ') > -1) {
     const splited = key.split(' ');
     method = splited[0].toLowerCase();
     path = splited[1];
+
     return [
       {
         method,
         path,
-        keys,
-        re: pathToRegexp(path, keys),
         handler: createHandler(method, path, handler),
         key,
       },
     ];
   }
 
-  return [
-    {
-      method: 'get',
-      path,
-      keys,
-      re: pathToRegexp(path, keys),
-      handler: createHandler(method, path, handler),
-      key,
-    },
-    {
-      method: 'post',
-      path,
-      keys,
-      re: pathToRegexp(path, keys),
-      handler: createHandler(method, path, handler),
-      key,
-    },
-  ];
+  return OPTIONAL_METHODS.map(method => ({
+    method,
+    path,
+    handler: createHandler(method, path, handler),
+    key,
+  }));
 }
 
 function createHandler(method, path, handler) {
   return function(req, res, next) {
-    if (['post', 'put', 'patch', 'delete'].includes(method)) {
+    // get method do not to bodyParser
+    const bodyParserMethods = OPTIONAL_METHODS.filter(method => method !== 'get');
+    if (bodyParserMethods.includes(method)) {
       bodyParser.json({ limit: '5mb', strict: false })(req, res, () => {
         bodyParser.urlencoded({ limit: '5mb', extended: true })(req, res, () => {
           sendData();
@@ -160,6 +149,8 @@ function createHandler(method, path, handler) {
 
     function sendData() {
       if (typeof handler === 'function') {
+        // deal with multipart/form-data
+        // https://github.com/expressjs/multer/blob/master/doc/README-zh-cn.md
         multer().any()(req, res, () => {
           handler(req, res, next);
         });

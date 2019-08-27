@@ -1,3 +1,5 @@
+const pathToRegexp = require('path-to-regexp');
+
 function decodeParam(val) {
   if (typeof val !== 'string' || val.length === 0) {
     return val;
@@ -14,14 +16,15 @@ function decodeParam(val) {
   }
 }
 
-function matchMock(req, mockConfig) {
-  const { path: targetPath, method } = req;
-  const targetMethod = method.toLowerCase();
+function matchPath(req, mockConfig) {
+  const { path: reqPath, method: reqMethod } = req;
 
   for (const mock of mockConfig) {
-    const { method, re, keys } = mock;
-    if (method === targetMethod) {
-      const match = re.exec(targetPath);
+    const { path: mockPath, method: mockMethod } = mock;
+    const keys = [];
+    const regexp = pathToRegexp(mockPath, keys);
+    if (mockMethod.toLowerCase() === reqMethod.toLowerCase()) {
+      const match = regexp.exec(reqPath);
       if (match) {
         const params = {};
         for (let i = 1; i < match.length; i += 1) {
@@ -39,4 +42,4 @@ function matchMock(req, mockConfig) {
   }
 }
 
-module.exports = matchMock;
+module.exports = matchPath;
