@@ -4,8 +4,10 @@ const bodyParser = require('body-parser');
 const chalk = require('chalk');
 const chokidar = require('chokidar');
 const path = require('path');
-const proxy = require('express-http-proxy');
-const url = require('url');
+const multer = require('multer');
+const matchPath = require('./matchPath');
+
+const OPTIONAL_METHODS = ['get', 'post', 'put', 'patch', 'delete'];
 
 const winPath = function(path) {
   return path.replace(/\\/g, '/');
@@ -15,14 +17,18 @@ const debug = require('debug')('ice:mock');
 
 let error = null;
 const cwd = process.cwd();
-const mockDir = path.join(cwd, 'mock');
-const configFile = path.join(cwd, 'mock', 'index.js');
+const mockDir = winPath(path.join(cwd, 'mock'));
+const jsConfigFile = path.join(cwd, 'mock', 'index.js');
+const tsConfigFile = path.join(cwd, 'mock', 'index.ts');
+const configFile = winPath(existsSync(tsConfigFile) ? tsConfigFile : jsConfigFile);
 
 function getConfig() {
   if (existsSync(configFile)) {
     // disable require cache
-    Object.keys(require.cache).forEach((file) => {
-      if (file === configFile || file.indexOf(mockDir) > -1) {
+    Object.keys(require.cache).forEach(file => {
+      const winPathFile = winPath(file);
+
+      if (winPathFile === configFile || winPathFile.indexOf(mockDir) > -1) {
         debug(`delete cache ${file}`);
         delete require.cache[file];
       }
@@ -31,33 +37,6 @@ function getConfig() {
   } else {
     return {};
   }
-}
-
-function createMockHandler(method, path, value) {
-  return function mockHandler(...args) {
-    const res = args[1];
-    if (typeof value === 'function') {
-      value(...args);
-    } else {
-      res.json(value);
-    }
-  };
-}
-
-function createProxy(method, path, target) {
-  return proxy(target, {
-    filter(req) {
-      return method ? req.method.toLowerCase() === method.toLowerCase() : true;
-    },
-    forwardPath(req) {
-      let matchPath = req.originalUrl;
-      const matches = matchPath.match(path);
-      if (matches.length > 1) {
-        matchPath = matches[1];
-      }
-      return winPath(path.join(url.parse(target).path, matchPath));
-    },
-  });
 }
 
 function applyMock(app) {
@@ -75,7 +54,7 @@ function applyMock(app) {
       ignored: /node_modules/,
       ignoreInitial: true,
     });
-    watcher.on('change', (path) => {
+    watcher.on('change', path => {
       console.log(chalk.green('CHANGED'), path.replace(cwd, '.'));
       watcher.close();
       applyMock(app);
@@ -84,80 +63,50 @@ function applyMock(app) {
 }
 
 function realApplyMock(app) {
-  const config = getConfig();
+  let mockConfig = [];
 
-  app.use(bodyParser.json({ limit: '5mb', strict: false }));
-  app.use(bodyParser.urlencoded({ extended: true, limit: '5mb' }));
+  function parseMockConfig() {
+    const parsedMockConfig = [];
 
-  let serverPaths = [];
-
-  Object.keys(config).forEach((key) => {
-    const keyParsed = parseKey(key);
-    Array.prototype.push.apply(serverPaths, keyParsed);
-  });
-
-  serverPaths.forEach((keyParsed) => {
-    assert(!!app[keyParsed.method], `method of ${keyParsed.key} is not valid`);
-    assert(
-      typeof config[keyParsed.key] === 'function' ||
-        typeof config[keyParsed.key] === 'object' ||
-        typeof config[keyParsed.key] === 'string',
-      `mock value of ${
-        keyParsed.key
-      } should be function or object or string, but got ${typeof config[
-        keyParsed.key
-      ]}`
-    );
-    if (typeof config[keyParsed.key] === 'string') {
-      let { path } = keyParsed;
-      if (/\(.+\)/.test(path)) {
-        path = new RegExp(`^${path}$`);
-      }
-      app.use(path, createProxy(keyParsed.method, path, config[keyParsed.key]));
-    } else {
-      app[keyParsed.method](
-        keyParsed.path,
-        createMockHandler(
-          keyParsed.method,
-          keyParsed.path,
-          config[keyParsed.key]
-        )
+    const config = getConfig();
+    Object.keys(config).forEach(key => {
+      const handler = config[key];
+      assert(
+        typeof handler === 'function' ||
+          typeof handler === 'object' ||
+          typeof handler === 'string',
+        `mock value of ${key} should be function or object or string, but got ${typeof handler}`
       );
-    }
-  });
 
-  // 调整 stack，把 historyApiFallback 放到最后
-  let lastIndex = null;
-  app._router.stack.forEach((item, index) => {
-    if (item.name === 'webpackDevMiddleware') {
-      lastIndex = index;
-    }
-  });
-  const mockAPILength = app._router.stack.length - 1 - lastIndex;
-  if (lastIndex && lastIndex > 0) {
-    const newStack = app._router.stack;
-    newStack.push(newStack[lastIndex - 1]);
-    newStack.push(newStack[lastIndex]);
-    newStack.splice(lastIndex - 1, 2);
-    app._router.stack = newStack;
+      Array.prototype.push.apply(parsedMockConfig, parseConfig(key, handler));
+    });
+
+    return parsedMockConfig;
   }
+
+  mockConfig = parseMockConfig();
 
   const watcher = chokidar.watch([configFile, mockDir], {
     ignored: /node_modules/,
     persistent: true,
   });
-  watcher.on('change', (path) => {
+  watcher.on('change', path => {
     console.log(chalk.green('CHANGED'), path.replace(cwd, '.'));
-    watcher.close();
+    mockConfig = parseMockConfig();
+  });
 
-    // 删除旧的 mock api
-    app._router.stack.splice(lastIndex - 1, mockAPILength);
-
-    applyMock(app);
+  app.use((req, res, next) => {
+    const match = mockConfig.length && matchPath(req, mockConfig);
+    if (match) {
+      debug(`mock matched: [${match.method}] ${match.path}`);
+      return match.handler(req, res, next);
+    } else {
+      return next();
+    }
   });
 }
 
-function parseKey(key) {
+function parseConfig(key, handler) {
   let method = 'get';
   let path = key;
 
@@ -165,11 +114,51 @@ function parseKey(key) {
     const splited = key.split(' ');
     method = splited[0].toLowerCase();
     path = splited[1];
-  } else {
-    return [{ method: 'get', path, key }, { method: 'post', path, key }];
+
+    return [
+      {
+        method,
+        path,
+        handler: createHandler(method, path, handler),
+        key,
+      },
+    ];
   }
 
-  return [{ method, path, key }];
+  return OPTIONAL_METHODS.map(method => ({
+    method,
+    path,
+    handler: createHandler(method, path, handler),
+    key,
+  }));
+}
+
+function createHandler(method, path, handler) {
+  return function(req, res, next) {
+    // get method do not to bodyParser
+    const bodyParserMethods = OPTIONAL_METHODS.filter(method => method !== 'get');
+    if (bodyParserMethods.includes(method)) {
+      bodyParser.json({ limit: '5mb', strict: false })(req, res, () => {
+        bodyParser.urlencoded({ limit: '5mb', extended: true })(req, res, () => {
+          sendData();
+        });
+      });
+    } else {
+      sendData();
+    }
+
+    function sendData() {
+      if (typeof handler === 'function') {
+        // deal with multipart/form-data
+        // https://github.com/expressjs/multer/blob/master/doc/README-zh-cn.md
+        multer().any()(req, res, () => {
+          handler(req, res, next);
+        });
+      } else {
+        res.json(handler);
+      }
+    }
+  };
 }
 
 function outputError() {
@@ -179,8 +168,8 @@ function outputError() {
   const relativeFilePath = filePath.replace(cwd, '.');
   const errors = error.stack
     .split('\n')
-    .filter((line) => line.trim().indexOf('at ') !== 0)
-    .map((line) => line.replace(`${filePath}: `, ''));
+    .filter(line => line.trim().indexOf('at ') !== 0)
+    .map(line => line.replace(`${filePath}: `, ''));
   errors.splice(1, 0, ['']);
 
   console.log(chalk.red('Failed to parse mock config.'));
