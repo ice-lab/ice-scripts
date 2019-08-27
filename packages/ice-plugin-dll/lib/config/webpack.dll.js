@@ -14,7 +14,7 @@ module.exports = (defaultConfig, rootDir) => {
     },
     output: {
       path: join('node_modules', 'plugin-dll', 'public'),
-      filename: '[name].js',
+      filename: '[name].dll.js',
       library: '[name]',
     },
     plugins: [
