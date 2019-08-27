@@ -6,7 +6,7 @@ module.exports = ({ chainWebpack }, proxyConfig) => {
   const proxy = proxyRules.map(([match, opts]) => {
     // set enable false to disable proxy rule
     const { enable, target, ...proxyRule } = opts;
-    if (enable) {
+    if (enable !== false) {
       return merge({
         target,
         changeOrigin: true,
@@ -21,6 +21,15 @@ module.exports = ({ chainWebpack }, proxyConfig) => {
             distTarget = target.replace(/\/$/, '');
           }
           proxyRes.headers['x-proxy-target-path'] = distTarget + req.url;
+        },
+        onError: function onError(err, req, res) {
+          // proxy server error can't trigger onProxyRes
+          res.writeHead(500, {
+            'x-proxy-by': 'ice-proxy',
+            'x-proxy-match': match,
+            'x-proxy-target': target,
+          });
+          res.end(`proxy server error: ${err.message}`);
         },
       }, proxyRule, { context: match });
     }

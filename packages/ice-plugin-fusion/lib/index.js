@@ -5,6 +5,7 @@ const CheckIceComponentsDepsPlugin = require('./webpackPlugins/checkIceComponent
 const AppendStyleWebpackPlugin = require('./webpackPlugins/appendStyleWebpackPlugin');
 const getThemeVars = require('./getThemeVars');
 const getThemeCode = require('./getThemeCode');
+const getCalcVars = require('./getCalcVars');
 
 function normalizeEntry(entry, preparedChunks) {
   const preparedName = preparedChunks
@@ -40,15 +41,25 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
     let defaultTheme = '';
     if (Array.isArray(themePackage)) {
       const themesCssVars = {};
+      let varsPath = path.join(rootDir, 'node_modules', '@alifd/next/variables.scss');
+      if (!fs.existsSync(varsPath)) {
+        varsPath = false;
+      }
       // get scss variables and generate css variables
       themePackage.forEach(({ name, ...themeData }) => {
         const themePath = path.join(rootDir, 'node_modules', `${name}/variables.scss`);
+        const configData = themeData.themeConfig || {};
         let themeVars = {};
+        let calcVars = {};
+        if (varsPath) {
+          calcVars = getCalcVars(varsPath, themePath, configData);
+        }
         try {
-          themeVars = getThemeVars(themePath, themeData.themeConfig || {});
+          themeVars = getThemeVars(themePath, Object.assign({}, calcVars, configData ));
         } catch (err) {
           log.error('get theme variables err:', err);
         }
+
         replaceVars = themeVars.scssVars;
         defaultScssVars = themeVars.originTheme;
         themesCssVars[name] = themeVars.cssVars;

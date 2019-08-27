@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.10
+
+- [feat] 多主题支持 @alifd/next 组件色值计算 sass 变量替换
+
 ## 0.1.9
 
 - [fix] 多主题切换函数 `__changeTheme__` 前置注入

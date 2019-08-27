@@ -14,6 +14,5 @@ packages/clean-css-parallel
 packages/css-prefix-plugin
 packages/extract-css-assets-webpack-plugin
 packages/uglify-parallel
-packages/webpack-dev-mock
 packages/webpack-plugin-import
 packages/ice-skin-loader
