@@ -1,6 +1,6 @@
 {
   "name": "ice-plugin-dll",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "ice plugin that uses Webpack DllPlugin",
   "main": "index.js",
   "author": "tanhengyeow",

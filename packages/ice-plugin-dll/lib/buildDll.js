@@ -37,36 +37,39 @@ async function generateDllVendorFile(outputDir, dependencies) {
   fs.writeFileSync(vendor, data);
 }
 
-async function includeDllInHTML(outputDir, defaultAppHtml, log) {
+async function includeDllInHTML(outputDir, defaultAppHtml, log, rebuild) {
   try {
     const htmlTemplate = path.join(outputDir, 'public', 'index.html');
-    let htmlContent;
-    let $;
+    const cssFile = path.join(outputDir, 'public', 'css', 'vendor.css');
 
-    // Check if index.html template exists
-    if (!fs.existsSync(htmlTemplate)){
-      // Read html content from default app index.html
-      htmlContent = fs.readFileSync(defaultAppHtml, 'utf-8');
-      $ = cheerio.load(htmlContent);
-      fs.writeFileSync(htmlTemplate, $.root().html());
-    } else {
-      // Read html content from index.html template
-      htmlContent = fs.readFileSync(htmlTemplate, 'utf-8');
-      $ = cheerio.load(htmlContent);
+    // Read html content from default app index.html
+    const htmlContent = fs.readFileSync(defaultAppHtml, 'utf-8');
+    const $ = cheerio.load(htmlContent);
+
+    // add vendor.css
+    if (fs.existsSync(cssFile) && !rebuild) {
+      $('head').append('<link href="css/vendor.css" rel="stylesheet">');
     }
 
     // Check if vendor.js is included inside the HTML file
-    if ($('script').length === 1 && $('script')[0].attribs.src === "vendor.js") {
-      return;
+    const hasVendor = (Array.from($('script')) || []).some(script => script.attribs.src === 'vendor.dll.js');
+    if (!hasVendor) {
+      $('body').append('<script data-id="dll" src="vendor.dll.js"></script>');
     }
-    $('body').append('<script src="vendor.js"></script>');
+    
     fs.writeFileSync(htmlTemplate, $.root().html());
   } catch (err) {
     log.error('Error opening or writing to file');
   }
 }
 
-async function buildDll(rootDir, dependencies, defaultAppHtml, log) {
+async function buildDll({
+  webpackConfig,
+  rootDir,
+  pkg,
+  htmlTemplate,
+  log,
+}) {
   // Create directories to store Dll related files
   const outputDir = path.join(rootDir, 'node_modules', 'plugin-dll');
   if (!fs.existsSync(outputDir)){
@@ -76,14 +79,13 @@ async function buildDll(rootDir, dependencies, defaultAppHtml, log) {
     fs.mkdirSync(path.join(outputDir, "public"));
   }
 
-  // Include vendor.js in HTML file
-  await includeDllInHTML(outputDir, defaultAppHtml, log);
-
   // Check for rebuild Dll status
-  const rebuildDll = await checkRebuildDll(outputDir, dependencies, log);
+  const rebuildDll = await checkRebuildDll(outputDir, pkg.dependencies, log);
+  // Include vendor.js in HTML file
+  await includeDllInHTML(outputDir, htmlTemplate, log, rebuildDll);
   if (rebuildDll) {
-    await generateDllVendorFile(outputDir, dependencies);
-    const dllConfig = getDllConfig(rootDir);
+    await generateDllVendorFile(outputDir, pkg.dependencies);
+    const dllConfig = getDllConfig(webpackConfig, rootDir);
     return new Promise((resolve, reject) => {
       log.info("Building Dll");
       webpack(dllConfig, error => {

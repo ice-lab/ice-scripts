@@ -2,12 +2,18 @@ const webpack = require('webpack');
 const path = require('path');
 const buildDll = require('./lib/buildDll');
 
-module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
+module.exports = async ({ chainWebpack, context, log }) => {
   const { rootDir, command, pkg } = context;
-  const { dev, build } = dllOptions;
-  if ((command === 'dev' && dev) || (command === 'build' && build)) {
-    const defaultAppHtml = path.join(rootDir, 'public', 'index.html');
-    await buildDll(rootDir, pkg.dependencies, defaultAppHtml, log);
+  // only active in dev mode
+  if (command === 'dev') {
+    const htmlTemplate = path.join(rootDir, 'public', 'index.html');
+    await buildDll({
+      webpackConfig: context.getWebpackConfig(),
+      rootDir,
+      pkg,
+      htmlTemplate,
+      log,
+    });
 
     const join = path.join.bind(path, rootDir);
     log.info('Dll build complete');
@@ -23,8 +29,7 @@ module.exports = async ({ chainWebpack, context, log }, dllOptions = {}) => {
         .plugin('DllReferencePlugin')
           .use(webpack.DllReferencePlugin, [{
             context: join('node_modules', 'plugin-dll'),
-            // eslint-disable-next-line import/no-dynamic-require
-            manifest: require(join('node_modules', 'plugin-dll', 'vendor-manifest.json')),
+            manifest: join('node_modules', 'plugin-dll', 'vendor-manifest.json'),
           }])
           .end()
         .plugin('CopyWebpackPlugin')

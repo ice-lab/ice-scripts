@@ -1,10 +1,12 @@
 const webpack = require('webpack');
 const path = require('path');
 
-module.exports = (rootDir) => {
+module.exports = (defaultConfig, rootDir) => {
   const join = path.join.bind(path, rootDir);
 
+  // merge default config to compile
   return {
+    ...defaultConfig,
     entry: {
       vendor: [
         join('node_modules', 'plugin-dll', 'vendor.js'),
@@ -12,10 +14,11 @@ module.exports = (rootDir) => {
     },
     output: {
       path: join('node_modules', 'plugin-dll', 'public'),
-      filename: '[name].js',
+      filename: '[name].dll.js',
       library: '[name]',
     },
     plugins: [
+      ...defaultConfig.plugins,
       new webpack.DllPlugin({
         path: join('node_modules', 'plugin-dll', '[name]-manifest.json'),
         name: '[name]',
