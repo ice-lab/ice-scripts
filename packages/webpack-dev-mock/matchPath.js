@@ -19,7 +19,8 @@ function decodeParam(val) {
 function matchPath(req, mockConfig) {
   const { path: reqPath, method: reqMethod } = req;
 
-  for (const mock of mockConfig) {
+  for (let m = 0; m < mockConfig.length; m++) {
+    const mock = mockConfig[m];
     const { path: mockPath, method: mockMethod } = mock;
     const keys = [];
     const regexp = pathToRegexp(mockPath, keys);
