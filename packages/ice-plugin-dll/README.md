@@ -8,7 +8,7 @@ ice plugin that uses Webpack DllPlugin
 $ npm install ice-plugin-dll --save-dev
 ```
 
-## Usaeg
+## Usage
 
 ```js
 // ice.config.js

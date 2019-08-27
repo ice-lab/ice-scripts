@@ -29,7 +29,6 @@ module.exports = async ({ chainWebpack, context, log }) => {
         .plugin('DllReferencePlugin')
           .use(webpack.DllReferencePlugin, [{
             context: join('node_modules', 'plugin-dll'),
-            // eslint-disable-next-line import/no-dynamic-require
             manifest: join('node_modules', 'plugin-dll', 'vendor-manifest.json'),
           }])
           .end()
