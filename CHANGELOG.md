@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.11
+
+- [fix] error mimetype of image
+- [feat] support --disable-mock to disable mock server
+
 ## 2.1.10
 
 - [fix] refactor mock dev server alibaba/ice#2455 alibaba/ice#2471 alibaba/ice#2462

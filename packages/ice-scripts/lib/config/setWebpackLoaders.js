@@ -84,7 +84,8 @@ module.exports = (chainConfig, mode = 'development') => {
 
     rule.use(type)
       .loader(URL_LOADER)
-      .options(Object.assign(defaultAssetsLoaderOpts, loaderOpts));
+      // keep defaultAssetsLoaderOpts immutable
+      .options(Object.assign({}, defaultAssetsLoaderOpts, loaderOpts));
   }
 
   // css loader
