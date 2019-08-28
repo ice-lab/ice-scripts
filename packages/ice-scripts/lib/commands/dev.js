@@ -70,20 +70,20 @@ module.exports = async function(context, subprocess) {
 
   let isFirstCompile = true;
 
-  // devMock 在 devServer 之前启动
-  const originalDevServeBefore = webpackConfig.devServer.before;
-  webpackConfig.devServer.before = function(app, server) {
-    if (commandArgs.disabledMock) {
-      log.warn('关闭了 mock 功能');
-    } else {
+  if (commandArgs.disabledMock) {
+    log.warn('关闭了 mock 功能');
+  } else {
+    // devMock 在 devServer 之前启动
+    const originalDevServeBefore = webpackConfig.devServer.before;
+    webpackConfig.devServer.before = function(app, server) {
       // dev mock
       webpackDevMock(app);
-    }
 
-    if (typeof originalDevServeBefore === 'function') {
-      originalDevServeBefore(app, server);
-    }
-  };
+      if (typeof originalDevServeBefore === 'function') {
+        originalDevServeBefore(app, server);
+      }
+    };
+  }
 
   const compiler = webpack(webpackConfig);
   const devServer = new WebpackDevServer(compiler, webpackConfig.devServer);
