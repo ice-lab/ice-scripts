@@ -73,7 +73,9 @@ module.exports = async function(context, subprocess) {
   // devMock 在 devServer 之前启动
   const originalDevServeBefore = webpackConfig.devServer.before;
   webpackConfig.devServer.before = function(app, server) {
-    if (process.env.MOCK !== 'none') {
+    if (commandArgs.disabledMock) {
+      log.warn('关闭了 mock 功能');
+    } else {
       // dev mock
       webpackDevMock(app);
     }
