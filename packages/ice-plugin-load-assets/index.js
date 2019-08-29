@@ -3,12 +3,12 @@ const getLoadScriptsCode = require('./getLoadScriptsCode');
 
 const parseArray = (url) => (Array.isArray(url) ? url : [url]);
 
-module.exports = ({ chainWebpack, log, context }, pluginOptions = {}) => {
+module.exports = ({ chainWebpack, log, context, ...restApi }, pluginOptions = {}) => {
   const { command } = context;
   const { assets } = pluginOptions;
   if (assets) {
     // inject code of getLoadScriptsCode
-    icePluginWrapCode({ chainWebpack, log }, {
+    icePluginWrapCode({ chainWebpack, log, context, ...restApi }, {
       addCodeBefore: `var initLoadUrls = (window.assetsUrls || []).concat(window.customUrls || []);
         ${getLoadScriptsCode()}
         __loadUrls__(initLoadUrls, function(){`,
@@ -18,7 +18,7 @@ module.exports = ({ chainWebpack, log, context }, pluginOptions = {}) => {
     const assetsUrls = { dev: [], build: [] };
     // get assets urls of different command
     ['dev', 'build'].forEach((env) => {
-      if (assetsUrls[env]) {
+      if (assets[env]) {
         assetsUrls[env] = assetsUrls[env].concat(parseArray(assets[env]));
       } else if (typeof assets === 'string' || Array.isArray(assets)) {
         assetsUrls[env] = assetsUrls[env].concat(parseArray(assets));
