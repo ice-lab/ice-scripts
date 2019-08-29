@@ -1,6 +1,6 @@
 {
   "name": "ice-plugin-cache-loader",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "ice plugin that uses cache-loader",
   "main": "index.js",
   "author": "tanhengyeow",

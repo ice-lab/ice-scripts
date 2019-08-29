@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 module.exports = ({ chainWebpack, log }, options = []) => {
   chainWebpack((config) => {
     // List of expensive loaders to cache if user does not specify any
@@ -23,6 +22,7 @@ module.exports = ({ chainWebpack, log }, options = []) => {
         rule.use.some(item => loadersList.some(loader => item.loader.includes(loader)));
 
       if (match) {
+        // eslint-disable-next-line no-underscore-dangle
         const ruleName = rule.__ruleNames[0];
 
         // Relevant issue: https://github.com/webpack-contrib/cache-loader/issues/40
