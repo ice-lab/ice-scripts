@@ -16,7 +16,7 @@ module.exports = class Context {
     this.commandArgs = args;
     this.rootDir = rootDir;
     this.pkg = getPkgData(this.rootDir);
-    // get user config form ice.config.js
+    // get user config from ice.config.js
     this.userConfig = this.getUserConfig();
     this.plugins = this.getPlugins();
     // init chainWebpackFns and hooks
@@ -131,7 +131,7 @@ module.exports = class Context {
       hotDev: this.command === 'dev' && !this.commandArgs.disabledReload,
       polyfill: this.userConfig.injectBabel === 'polyfill',
     });
-    return config.toConfig();
+    return config;
   }
 
   async reRun() {
@@ -144,7 +144,7 @@ module.exports = class Context {
   async run() {
     await this.runPlugins();
     // get final config before run command
-    this.webpackConfig = this.getWebpackConfig();
+    this.webpackConfig = this.getWebpackConfig().toConfig();
     // load command and run
     // eslint-disable-next-line import/no-dynamic-require
     const command = require(`../commands/${this.command}`);

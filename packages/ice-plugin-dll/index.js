@@ -8,7 +8,7 @@ module.exports = async ({ chainWebpack, context, log }) => {
   if (command === 'dev') {
     const htmlTemplate = path.join(rootDir, 'public', 'index.html');
     await buildDll({
-      webpackConfig: context.getWebpackConfig(),
+      webpackConfig: context.getWebpackConfig().toConfig(),
       rootDir,
       pkg,
       htmlTemplate,

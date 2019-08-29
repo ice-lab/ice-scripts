@@ -18,28 +18,28 @@ describe('init context', () => {
 
   it('plugin with option', async (done) => {
     await context.runPlugins();
-    const webpackConfig = context.getWebpackConfig();
+    const webpackConfig = context.getWebpackConfig().toConfig();
     expect(webpackConfig.resolve.alias).toEqual({ react: 'b' });
     done();
   });
 
   it('require plugin', async (done) => {
     await context.runPlugins();
-    const webpackConfig = context.getWebpackConfig();
+    const webpackConfig = context.getWebpackConfig().toConfig();
     expect(webpackConfig.output.filename).toBe('[name].bundle.js');
     done();
   });
 
   it('plugin defined by string', async (done) => {
     await context.runPlugins();
-    const webpackConfig = context.getWebpackConfig();
+    const webpackConfig = context.getWebpackConfig().toConfig();
     expect(webpackConfig.output.path).toBe('custom');
     done();
   });
 
   it('default values', async (done) => {
     await context.runPlugins();
-    const webpackConfig = context.getWebpackConfig();
+    const webpackConfig = context.getWebpackConfig().toConfig();
     expect(webpackConfig.resolve.extensions).toEqual(['.js', '.jsx', '.json', '.html', '.ts', '.tsx']);
     expect(webpackConfig.entry.index).toEqual([
       path.resolve(process.cwd(), 'src/index.js'),
