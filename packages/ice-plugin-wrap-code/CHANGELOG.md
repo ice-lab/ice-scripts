@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- [fix] enable inject code when develop component
+
 ## 0.1.2
 
 - [fix] 优化调试信息输出
