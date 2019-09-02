@@ -28,7 +28,7 @@ module.exports = (config, { rootDir }) => {
       amd: 'react',
     },
     'react-dom': {
-      root: 'ReactDom',
+      root: 'ReactDOM',
       commonjs: 'react-dom',
       commonjs2: 'react-dom',
       amd: 'react-dom',

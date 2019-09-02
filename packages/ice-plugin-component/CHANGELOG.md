@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6
+
+ - [fix] externals react-dom
+
 ## 0.1.5
 
  - [fix] fix: modular-import did not work with ice-plugin-component alibaba/ice#2724
