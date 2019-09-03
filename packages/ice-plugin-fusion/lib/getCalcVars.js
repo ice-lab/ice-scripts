@@ -9,6 +9,12 @@ const SASS_REGEX = /\$color-calculate[\w-]+?:[\s\S]+?;/g;
 // .color-calculate-xxxx {color: rgba(0, 0, 0, 1);}
 const CSS_REGEX = /\.color-calculate[\w\s-]+?\{[\s\S]+?\}/g;
 
+// fix problem with importing absolute paths on windows.
+function formatPathForWin(filepath) {
+  const isWin = process.platform === 'win32';
+  return isWin ? filepath.replace(/\\/g, '/') : filepath;
+};
+
 module.exports = (varsPath, themePath, themeConfig) => {
   let variablesContent = '';
   try {
@@ -28,8 +34,8 @@ module.exports = (varsPath, themePath, themeConfig) => {
       calcKeys.push(key.slice(1).trim());
     });
     // create sass content
-    const sassContent = `@import '${varsPath}';
-@import '${themePath}';
+    const sassContent = `@import '${formatPathForWin(varsPath)}';
+@import '${formatPathForWin(themePath)}';
 ${Object.keys(themeConfig).map((key) => {
   const value = themeConfig[key];
   return `$${key}: ${value};`;

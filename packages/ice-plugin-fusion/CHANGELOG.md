@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.11
+
+- [fix] problem with importing scss file paths on windows
+
 ## 0.1.10
 
 - [feat] 多主题支持 @alifd/next 组件色值计算 sass 变量替换
