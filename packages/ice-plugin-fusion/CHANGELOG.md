@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.12
+
+- [feat] support option nextLibDir for change libraryDirectory
+
 ## 0.1.11
 
 - [fix] problem with importing scss file paths on windows
