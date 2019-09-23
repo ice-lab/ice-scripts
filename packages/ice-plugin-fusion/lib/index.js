@@ -19,7 +19,7 @@ function normalizeEntry(entry, preparedChunks) {
 
 module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
   plugionOptions = plugionOptions || {};
-  const { themePackage, themeConfig } = plugionOptions;
+  const { themePackage, themeConfig, nextLibDir } = plugionOptions;
   let { uniteBaseComponent } = plugionOptions;
   const { rootDir, pkg, userConfig } = context;
 
@@ -142,7 +142,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
       style: true,
     }, {
       libraryName: '@alifd/next',
-      libraryDirectory: 'es',
+      libraryDirectory: nextLibDir || 'es',
       style: true,
     }];
     ['jsx', 'tsx'].forEach((rule) => {
