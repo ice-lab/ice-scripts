@@ -6,5 +6,8 @@ module.exports = deepmerge(eslint, {
   },
   "rules": {
     "global-require": 1,
+  },
+  "parserOptions": {
+    "ecmaFeatures": { "legacyDecorators": true },
   }
 });
