@@ -39,7 +39,6 @@ function getConfig(rootDir) {
       try {
         // eslint-disable-next-line import/no-dynamic-require, global-require
         const mockData = require(mockFile) || {};
-        console.log(mockData);
         Object.assign(mockConfig, mockData);
       } catch (err) {
         console.log(chalk.red(`Failed to require mock file: ${mockFile}`));
