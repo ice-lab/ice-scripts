@@ -41,11 +41,21 @@ function getConfig(rootDir) {
         const mockData = require(mockFile) || {};
         Object.assign(mockConfig, mockData);
       } catch (err) {
-        console.log(chalk.red(`Failed to require mock file: ${mockFile}`));
+        debug(`Failed to require mock file: ${mockFile}`);
       }
     }
   });
   return mockConfig;
+}
+
+const watchFiles = {};
+function logWatchFile(event, filePath) {
+  // won't log message when initialize
+  if (watchFiles[filePath]) {
+    console.log(chalk.green(event.toUpperCase()), filePath.replace(cwd, '.'));
+  } else {
+    watchFiles[filePath] = true;
+  }
 }
 
 function applyMock(app) {
@@ -64,7 +74,7 @@ function applyMock(app) {
       ignoreInitial: true,
     });
     watcher.on('all', (event, path) => {
-      console.log(chalk.green(event.toUpperCase()), path.replace(cwd, '.'));
+      logWatchFile(event, path);
       watcher.close();
       applyMock(app);
     });
@@ -100,7 +110,7 @@ function realApplyMock(app) {
     persistent: true,
   });
   watcher.on('all', (event, path) => {
-    console.log(chalk.green(event.toUpperCase()), path.replace(cwd, '.'));
+    logWatchFile(event, path);
     mockConfig = parseMockConfig();
   });
 
