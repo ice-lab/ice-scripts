@@ -96,7 +96,7 @@ async function buildDll({
       });
     });
   }
-  log.info("No new changes from dependencies.json")
+  log.info("No new changes from dependencies.json");
 }
 
 module.exports = buildDll;
