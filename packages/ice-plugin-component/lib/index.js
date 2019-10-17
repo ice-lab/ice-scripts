@@ -95,7 +95,7 @@ module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
       styleGenerator.writeIndexScssSync();
       log.info('Generated index.scss');
     }
-  }
+  };
 
   if (!watcher && watch) {
     const srcPath = path.join(rootDir, 'src');
