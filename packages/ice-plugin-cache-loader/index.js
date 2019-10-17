@@ -51,4 +51,4 @@ module.exports = ({ chainWebpack, log }, options = []) => {
       }
     });
   });
-}
+};

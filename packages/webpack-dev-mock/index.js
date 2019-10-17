@@ -1,5 +1,6 @@
 const { existsSync } = require('fs');
 const assert = require('assert');
+const glob = require('glob');
 const bodyParser = require('body-parser');
 const chalk = require('chalk');
 const chokidar = require('chokidar');
@@ -17,25 +18,43 @@ const winPath = function(path) {
 let error = null;
 const cwd = process.cwd();
 const mockDir = winPath(path.join(cwd, 'mock'));
-const jsConfigFile = path.join(cwd, 'mock', 'index.js');
-const tsConfigFile = path.join(cwd, 'mock', 'index.ts');
-const configFile = winPath(existsSync(tsConfigFile) ? tsConfigFile : jsConfigFile);
 
-function getConfig() {
-  if (existsSync(configFile)) {
-    // disable require cache
-    Object.keys(require.cache).forEach(file => {
-      const winPathFile = winPath(file);
+function getConfig(rootDir) {
+  // get mock files
+  const mockFiles = glob.sync('mock/**/*.[jt]s', {
+    cwd: rootDir,
+  }).map(file => path.join(rootDir, file));
+  const mockConfig = {};
+  mockFiles.forEach(mockFile => {
+    if (existsSync(mockFile)) {
+      // disable require cache
+      Object.keys(require.cache).forEach(file => {
+        const winPathFile = winPath(file);
 
-      if (winPathFile === configFile || winPathFile.indexOf(mockDir) > -1) {
-        debug(`delete cache ${file}`);
-        delete require.cache[file];
+        if (winPathFile === mockFile || winPathFile.indexOf(mockDir) > -1) {
+          debug(`delete cache ${file}`);
+          delete require.cache[file];
+        }
+      });
+      try {
+        // eslint-disable-next-line import/no-dynamic-require, global-require
+        const mockData = require(mockFile) || {};
+        Object.assign(mockConfig, mockData);
+      } catch (err) {
+        debug(`Failed to require mock file: ${mockFile}`);
       }
-    });
-    // eslint-disable-next-line import/no-dynamic-require
-    return require(configFile);
+    }
+  });
+  return mockConfig;
+}
+
+const watchFiles = {};
+function logWatchFile(event, filePath) {
+  // won't log message when initialize
+  if (watchFiles[filePath]) {
+    console.log(chalk.green(event.toUpperCase()), filePath.replace(cwd, '.'));
   } else {
-    return {};
+    watchFiles[filePath] = true;
   }
 }
 
@@ -50,12 +69,12 @@ function applyMock(app) {
     console.log();
     outputError();
 
-    const watcher = chokidar.watch([configFile, mockDir], {
+    const watcher = chokidar.watch([mockDir], {
       ignored: /node_modules/,
       ignoreInitial: true,
     });
-    watcher.on('change', path => {
-      console.log(chalk.green('CHANGED'), path.replace(cwd, '.'));
+    watcher.on('all', (event, path) => {
+      logWatchFile(event, path);
       watcher.close();
       applyMock(app);
     });
@@ -68,7 +87,7 @@ function realApplyMock(app) {
   function parseMockConfig() {
     const parsedMockConfig = [];
 
-    const config = getConfig();
+    const config = getConfig(cwd);
     Object.keys(config).forEach(key => {
       const handler = config[key];
       assert(
@@ -86,12 +105,12 @@ function realApplyMock(app) {
 
   mockConfig = parseMockConfig();
 
-  const watcher = chokidar.watch([configFile, mockDir], {
+  const watcher = chokidar.watch([mockDir], {
     ignored: /node_modules/,
     persistent: true,
   });
-  watcher.on('change', path => {
-    console.log(chalk.green('CHANGED'), path.replace(cwd, '.'));
+  watcher.on('all', (event, path) => {
+    logWatchFile(event, path);
     mockConfig = parseMockConfig();
   });
 
