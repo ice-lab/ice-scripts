@@ -1,6 +1,7 @@
 const path = require('path');
 const fse = require('fs-extra');
 const clonedeep = require('lodash.clonedeep');
+const resolveSassImport = require('resolve-sass-import');
 const { getPkgJSONSync } = require('./utils/pkgJson');
 const getDemoDir = require('./utils/getDemoDir');
 const getDemos = require('./utils/getDemos');
@@ -9,7 +10,6 @@ const { parseMarkdownParts } = require('./compile/component/markdownHelper');
 const buildSrc = require('./compile/component/buildSrc');
 const modifyPkgHomePage = require('./compile/component/modifyPkgHomePage');
 const ComponentStyleGenerator = require('./compile/fusion/componentStyleGenerator');
-const resolveSassImport = require('./compile/fusion/resolveSassImport');
 const baseConfig = require('./configs/base');
 const devConfig = require('./configs/dev');
 const buildConfig = require('./configs/build');
