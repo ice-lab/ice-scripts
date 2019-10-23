@@ -110,7 +110,9 @@ module.exports = async function(context, subprocess) {
           `    - Network: ${chalk.yellow(urls.lanUrlForTerminal)}`,
         ].join('\n')
       );
-      openBrowser(urls.localUrlForBrowser);
+      if (!commandArgs.disabledOpen) {
+        openBrowser(urls.localUrlForBrowser);
+      }
     }
 
     applyHook('afterDev', stats);

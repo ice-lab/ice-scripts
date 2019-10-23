@@ -15,6 +15,7 @@ program
   .option('--analyzer-port', '设置分析端口号')
   .option('--disabled-reload', '关闭 hot reload')
   .option('--disabled-mock', '关闭 mock')
+  .option('--disabled-open', 'do not open browser after compile')
   .option('--config <config>', 'use custom config')
   .parse(process.argv);
 
