@@ -44,8 +44,9 @@ function dedupe(arr) {
 // 为了让 require.resolve 可以解析 .jsx 和 .vue 文件
 require.extensions['.jsx'] = require.extensions['.js'];
 require.extensions['.vue'] = require.extensions['.js'];
-const tracedFiles = {};
+
 module.exports = function (entryFilePath) {
+  const tracedFiles = {};
   let result = [];
   trace(require.resolve(entryFilePath));
 

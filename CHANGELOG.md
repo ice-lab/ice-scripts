@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.12
+
+- [feat] support file watcher for compile library alibaba/ice#2844
+- [feat] support cli option to disable open browser alibaba/ice#2875
+- [fix] wrap lines when resolve sass import alibaba/ice#2876
+
 ## 2.1.11
 
 - [fix] error mimetype of image
