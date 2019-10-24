@@ -26,6 +26,7 @@
     "marked": "^0.6.2",
     "npmlog": "^4.1.2",
     "prismjs": "^1.16.0",
-    "resolve": "^1.11.0"
+    "resolve": "^1.11.0",
+    "resolve-sass-import": "^0.1.0"
   }
 }
