@@ -1,6 +1,6 @@
 {
   "name": "resolve-sass-import",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "resolve sass import",
   "main": "index.js",
   "scripts": {
