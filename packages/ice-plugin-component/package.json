@@ -1,6 +1,6 @@
 {
   "name": "ice-plugin-component",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "ice plugin for develop component",
   "main": "lib/index.js",
   "scripts": {
@@ -15,6 +15,7 @@
   "dependencies": {
     "@babel/core": "^7.4.4",
     "@babel/plugin-transform-runtime": "^7.4.4",
+    "chokidar": "^3.2.2",
     "fs-extra": "^8.0.1",
     "handlebars": "^4.1.2",
     "handlebars-loader": "^1.7.1",
