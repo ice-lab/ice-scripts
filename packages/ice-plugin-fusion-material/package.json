@@ -1,0 +1,14 @@
+{
+  "name": "ice-plugin-fusion-material",
+  "version": "0.1.0",
+  "description": "ice plugin fusion material",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "puppeteer": "^2.0.0"
+  }
+}
