@@ -10,5 +10,9 @@
   "license": "ISC",
   "devDependencies": {
     "puppeteer": "^2.0.0"
+  },
+  "dependencies": {
+    "detect-port": "^1.3.0",
+    "ora": "^4.0.2"
   }
 }
