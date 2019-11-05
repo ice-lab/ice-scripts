@@ -11,7 +11,7 @@ const updatePackageJson = (packageJsonPath, type, htmls, screenshots) => {
     jsonObj[type].views[i].html = htmls[i];
     jsonObj[type].views[i].screenshot = screenshots[i];
   }
-  fs.writeFileSync(packageJsonPath, JSON.stringify(jsonObj));
+  fs.writeFileSync(packageJsonPath, JSON.stringify(jsonObj, null, '  '));
 };
 
 module.exports = ({
@@ -31,14 +31,14 @@ module.exports = ({
     if (pkg.blockConfig && pkg.blockConfig.views) {
       // block type
       screenShot(rootDir, '/build/index.html', './build/views/block_view1.png', './build/views/block_view1.html', 2000);
-      updatePackageJson(packageJsonPath, 'blockConfig', ['./build/views/block_view1.html'], ['./build/views/block_view1.png']);
+      updatePackageJson(packageJsonPath, 'blockConfig', ['build/views/block_view1.html'], ['build/views/block_view1.png']);
     } 
     else if (pkg.scaffoldConfig && pkg.scaffoldConfig.views) {
       // scaffold type
       for (let i = 0; i < pkg.scaffoldConfig.views.length; i++) {
         screenShot(rootDir, '/build/index.html', `./build/views/page${i}.png`, `./build/views/page${i}.html`, 2000, pkg.scaffoldConfig.views[i].path);
-        htmls.push(`./build/views/page${i}.html`);
-        screenshots.push(`./build/views/page${i}.png`);
+        htmls.push(`build/views/page${i}.html`);
+        screenshots.push(`build/views/page${i}.png`);
       }
       updatePackageJson(packageJsonPath, 'scaffoldConfig', htmls, screenshots);
     }

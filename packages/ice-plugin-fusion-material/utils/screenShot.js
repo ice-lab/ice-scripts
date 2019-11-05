@@ -26,7 +26,7 @@ async function screenshotWithLocalServer(serverPath, targetUrl, imgOutput, htmlO
   const server = createServer(serverPath, port);
   let url = targetUrl;
   if (routePath) {
-    url = targetUrl + routePath;
+    url = `${targetUrl}#${routePath}`;
   }
   await screenshot(url, imgOutput, htmlOutput, timeout);
   server.close();
@@ -51,9 +51,9 @@ async function screenshot(url, imgOutput, htmlOutput, timeout) {
     const page = await browser.newPage();
     // set page's viewport
     page.setViewport({
-      width: 1240,
-      height: 600,
-      deviceScaleFactor: 2,
+      width: 1440,
+      height: 900,
+      deviceScaleFactor: 1,
     });
 
     // visit the target url
