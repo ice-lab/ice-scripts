@@ -4,7 +4,6 @@ const screenShot = require('./utils/screenShot');
 
 // Update package.json
 const updatePackageJson = (packageJsonPath, type, htmls, screenshots) => {
-  console.log('htmls', htmls);
   const jsonData = fs.readFileSync(packageJsonPath, 'utf8');
   const jsonObj = JSON.parse(jsonData);
   for (let i = 0; i < htmls.length; i++) {
