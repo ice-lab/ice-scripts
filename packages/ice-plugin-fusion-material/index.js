@@ -26,8 +26,8 @@ module.exports = ({
     const outputRootPath = path.join(rootDir, 'build', 'views');
     fs.mkdirSync(outputRootPath);
     // get htmls and screenshots if blockConfig.views or scaffoldConfig.views exist
-    let htmls = [];
-    let screenshots = [];
+    const htmls = [];
+    const screenshots = [];
     if (pkg.blockConfig && pkg.blockConfig.views) {
       // block type
       screenShot(rootDir, '/build/index.html', './build/views/block_view1.png', './build/views/block_view1.html', 2000);
