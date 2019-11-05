@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.6
+
+- [fix] debug error when fail to parse mock config
+
 ## 0.1.5
 
 - [fix] optimization log output

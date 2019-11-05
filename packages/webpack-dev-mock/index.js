@@ -90,14 +90,11 @@ function realApplyMock(app) {
     const config = getConfig(cwd);
     Object.keys(config).forEach(key => {
       const handler = config[key];
-      assert(
-        typeof handler === 'function' ||
-          typeof handler === 'object' ||
-          typeof handler === 'string',
-        `mock value of ${key} should be function or object or string, but got ${typeof handler}`
-      );
-
-      Array.prototype.push.apply(parsedMockConfig, parseConfig(key, handler));
+      if (typeof handler === 'function' || typeof handler === 'object' || typeof handler === 'string') {
+        Array.prototype.push.apply(parsedMockConfig, parseConfig(key, handler));
+      } else {
+        debug(`mock value of ${key} should be function or object or string, but got ${typeof handler}`);
+      }
     });
 
     return parsedMockConfig;
