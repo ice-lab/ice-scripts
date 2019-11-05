@@ -73,7 +73,8 @@ async function screenshot(url, imgOutput, htmlOutput, timeout) {
       }
       // delete <script> tag
       const SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
-      return document.body.innerHTML.replace(SCRIPT_REGEX, "");
+      const IFRAME_REGEX = /<iframe\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/iframe>/gi;
+      return document.body.innerHTML.replace(SCRIPT_REGEX, "").replace(IFRAME_REGEX, "");
     });
     fs.writeFileSync(htmlOutput, htmlContent);
 
