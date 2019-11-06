@@ -27,4 +27,3 @@ tools/extract-css-assets-webpack-plugin/lib/
 tools/iceworks/out
 tools/iceworks/dist
 tools/iceworks/renderer/src/datacenter/data
-demo
