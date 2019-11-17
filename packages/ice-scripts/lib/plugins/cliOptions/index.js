@@ -23,7 +23,7 @@ module.exports = async ({ context, chainWebpack }) => {
       config.plugins.delete('HotModuleReplacementPlugin');
 
       // remove css hot loader of scss/module-scss/css/module-css/less/module-less
-      ['scss', 'scss-module', 'css', 'css-module', 'less', 'less-module'].forEach((rule) => {
+      ['scss', 'scss-module', 'css', 'css-module', 'less', 'less-module', 'styl', 'styl-module'].forEach((rule) => {
         if (config.module.rules.get(rule)) {
           config.module.rule(rule).uses.delete('css-hot-loader');
         }
