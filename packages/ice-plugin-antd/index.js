@@ -1,9 +1,9 @@
 module.exports = async ({ chainWebpack, log }, pluginOptions) => {
-  const { themeConfig } = pluginOptions || {};
+  const { themeConfig, libraryName = 'antd' } = pluginOptions || {};
   chainWebpack((config) => {
     // 1. 支持主题能力
     if (themeConfig) {
-      log.info('自定义 Antd 组件主题变量：', themeConfig);
+      log.info(`自定义 ${libraryName} 组件主题变量：`, themeConfig);
     }
     ['less', 'less-module'].forEach((rule) => {
       config.module
@@ -29,11 +29,11 @@ module.exports = async ({ chainWebpack, log }, pluginOptions) => {
             [
               require.resolve('babel-plugin-import'),
               {
-                libraryName: 'antd',
+                libraryName,
                 libraryDirectory: 'es',
                 style: true,
               },
-              'antd',
+              libraryName,
             ]
           );
           return options;

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.13
+
+- [feat] support stylus alibaba/ice#2910
+- [feat] ice-plugin-fusion-material: generate screenshot and html used in fusion cool
+- [feat] ice-plugin-antd supportn option libraryName
+
 ## 2.1.12
 
 - [feat] support file watcher for compile library alibaba/ice#2844

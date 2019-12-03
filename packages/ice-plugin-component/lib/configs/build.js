@@ -15,7 +15,7 @@ module.exports = (config, { demos, markdownParser, rootDir }) => {
     }),
   };
   config.output.publicPath('./');
-  ['scss', 'scss-module', 'css', 'css-module', 'less', 'less-module'].forEach((rule) => {
+  ['scss', 'scss-module', 'css', 'css-module', 'less', 'less-module', 'styl', 'styl-module'].forEach((rule) => {
     if (config.module.rules.get(rule)) {
       config.module.rule(rule).use('MiniCssExtractPlugin.loader').tap(() => ({ publicPath: '../' }));
     }

@@ -7,7 +7,7 @@ module.exports = (config, value, userConfig) => {
     const pathArray = outputCssPath.split('/').length;
     const publicPath = `${[...Array(pathArray)].map(() => '..').join('/')}/`;
     // MiniCssExtractPlugin.loader will use output.publicPath as default
-    ['scss', 'scss-module', 'css', 'css-module', 'less', 'less-module'].forEach((rule) => {
+    ['scss', 'scss-module', 'css', 'css-module', 'less', 'less-module', 'styl', 'styl-module'].forEach((rule) => {
       if (config.module.rules.get(rule)) {
         config.module.rule(rule).use('MiniCssExtractPlugin.loader').tap(() => ({ publicPath }));
       }
