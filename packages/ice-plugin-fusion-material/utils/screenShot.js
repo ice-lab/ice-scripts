@@ -69,7 +69,7 @@ async function screenshot(url, imgOutput, htmlOutput, timeout) {
     const htmlContent = await page.evaluate(() => {
       // convert all canvas to img
       for (let i = 0; i < document.getElementsByTagName("canvas").length; i++) {
-        document.getElementsByTagName("canvas")[i].outerHTML = `<img src="${document.getElementsByTagName("canvas")[i].toDataURL("image/png")}"/>`;
+        document.getElementsByTagName("canvas")[i].outerHTML = `<img src="${document.getElementsByTagName("canvas")[i].toDataURL("image/png", 1)}"/>`;
       }
       // delete <script> tag
       const SCRIPT_REGEX = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi;
