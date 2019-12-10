@@ -82,7 +82,7 @@ module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
     delete babelConfig.cacheDirectory;
     // component buildSrc
     buildSrc({ babelConfig, rootDir, log });
-    if (type === 'fusion') {
+    if (type === 'fusion' || type === 'deep') {
       const styleGenerator = new ComponentStyleGenerator({
         cwd: rootDir,
         destPath: path.join(rootDir, 'lib'),

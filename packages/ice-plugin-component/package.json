@@ -1,6 +1,6 @@
 {
-  "name": "ice-plugin-component",
-  "version": "0.1.8",
+  "name": "@ali/ice-plugin-component-deep",
+  "version": "0.1.1",
   "description": "ice plugin for develop component",
   "main": "lib/index.js",
   "scripts": {
@@ -28,5 +28,8 @@
     "prismjs": "^1.16.0",
     "resolve": "^1.11.0",
     "resolve-sass-import": "^0.1.0"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npm.alibaba-inc.com"
   }
 }
