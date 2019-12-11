@@ -31,4 +31,4 @@ module.exports = function getPostcssConfig(context = process.cwd()) {
   }
 
   return postcssConfig;
-}
+};
