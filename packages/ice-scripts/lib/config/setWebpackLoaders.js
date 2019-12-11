@@ -1,7 +1,7 @@
 /* eslint-disable indent */
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const deepClone = require('lodash.clonedeep');
-const postcssConfig = require('./postcssConfig');
+const getPostcssConfig = require('./getPostcssConfig');
 const getBabelConfig = require('./getBabelConfig');
 
 const TYPESCRIPT_LOADER = require.resolve('ts-loader');
@@ -66,7 +66,7 @@ module.exports = (chainConfig, mode = 'development') => {
 
       rule.use('postcss-loader')
         .loader(POSTCSS_LOADER)
-        .options(Object.assign({ sourceMap: true }, postcssConfig));
+        .options(Object.assign({ sourceMap: true }, getPostcssConfig()));
 
       if (loaders && loaders.length > 0) {
         loaders.forEach((loader) => {
