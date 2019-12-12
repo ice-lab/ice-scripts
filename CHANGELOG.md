@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.14
+
+- [feat] support postcssrc/postcss.config.js #2952
+
 ## 2.1.13
 
 - [feat] support stylus alibaba/ice#2910
