@@ -1,7 +1,9 @@
 /* eslint-disable indent */
+const fse = require("fs-extra");
+const path = require("path");
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const deepClone = require('lodash.clonedeep');
-const getPostcssConfig = require('./getPostcssConfig');
+const postcssConfig = require('./postcssConfig');
 const getBabelConfig = require('./getBabelConfig');
 
 const TYPESCRIPT_LOADER = require.resolve('ts-loader');
@@ -64,9 +66,15 @@ module.exports = (chainConfig, mode = 'development') => {
         .loader(CSS_LOADER)
         .options(isModule ? cssModuleLoaderOpts : cssLoaderOpts);
 
-      rule.use('postcss-loader')
-        .loader(POSTCSS_LOADER)
-        .options(Object.assign({ sourceMap: true }, getPostcssConfig()));
+      const userPostcssConfigPath = path.resolve(process.cwd(), "postcss.config.js");
+      if (fse.existsSync(userPostcssConfigPath)) {
+        rule.use('postcss-loader')
+          .loader(POSTCSS_LOADER);
+      } else {
+        rule.use('postcss-loader')
+          .loader(POSTCSS_LOADER)
+          .options(Object.assign({ sourceMap: true }, postcssConfig));
+      }
 
       if (loaders && loaders.length > 0) {
         loaders.forEach((loader) => {
