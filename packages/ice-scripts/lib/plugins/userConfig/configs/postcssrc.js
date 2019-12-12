@@ -16,7 +16,7 @@ module.exports = ({ chainWebpack }, postcssrc) => {
           config.module
             .rule(rule)
             .use("postcss-loader")
-            .tap(({ plugins, ...others }) => ({ ...others }));
+            .tap(() => ({}));
         }
       });
     });
