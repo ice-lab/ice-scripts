@@ -1,7 +1,7 @@
 module.exports = ({ chainWebpack }, postcssrc) => {
   if (postcssrc) {
     chainWebpack(config => {
-      // remove postcss-loader plugins in options
+      // remove postcss-loader options
       [
         "scss",
         "scss-module",
