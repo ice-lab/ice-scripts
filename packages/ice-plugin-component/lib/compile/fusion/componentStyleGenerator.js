@@ -47,6 +47,8 @@ module.exports = class ComponentStyleGenerator {
         /@alifd\/.*/,
         /^@alifd\/next\/lib\/([^/]+)/,
         /@ali\/ice-.*/,
+        /@ali\/deep-.*/,
+        /@ali\/deep\/lib\/([^/]+)/,
       ];
       const isInteranlLibrary = internalLibrary.some((library) => {
         return library.test(dep);
