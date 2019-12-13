@@ -1,6 +1,6 @@
 {
-  "name": "@ali/ice-plugin-component-deep",
-  "version": "0.1.1",
+  "name": "ice-plugin-component",
+  "version": "0.1.9",
   "description": "ice plugin for develop component",
   "main": "lib/index.js",
   "scripts": {
