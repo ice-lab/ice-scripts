@@ -1,6 +1,6 @@
 {
   "name": "ice-plugin-component",
-  "version": "0.1.8",
+  "version": "0.1.10",
   "description": "ice plugin for develop component",
   "main": "lib/index.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "npmlog": "^4.1.2",
     "prismjs": "^1.16.0",
     "resolve": "^1.11.0",
-    "resolve-sass-import": "^0.1.0"
+    "resolve-sass-import": "^0.1.0",
+    "typescript": "^3.7.3"
   }
 }

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.10
+
+ - [feat] generate declaration when compile ts
+
 ## 0.1.7
 
  - [feat] support option watch for compile library when source files changed
