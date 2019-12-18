@@ -124,6 +124,7 @@ module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
       if (hasAdaptor) {
         // generate adaptor index.scss
         const sassContent = resolveSassImport('main.scss', path.resolve(rootDir, 'src'));
+        fse.ensureDirSync(path.join(rootDir, 'build'));
         fse.writeFileSync(path.resolve(rootDir, 'build/index.scss'), sassContent, 'utf-8');
         // adaptor build
         reRun();
