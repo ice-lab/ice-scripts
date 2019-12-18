@@ -16,3 +16,4 @@ build
 .vscode/
 .tmp/
 npmrc
+.idea

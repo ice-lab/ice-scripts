@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.9
+
+ - [feat] support basic component @ali/deep for style generate
+
 ## 0.1.7
 
  - [feat] support option watch for compile library when source files changed
