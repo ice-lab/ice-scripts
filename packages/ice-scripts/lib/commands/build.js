@@ -43,28 +43,34 @@ module.exports = async function (context) {
     }
   }
 
-  // empty output path
-  fse.emptyDirSync(webpackConfig.output.path);
-  return new Promise((resolve, reject) => {
-    webpack(webpackConfig, (error, stats) => {
-      if (error) {
-        return reject(error);
-      }
-      console.log(
-        stats.toString({
-          colors: true,
-          chunks: false,
-          children: false,
-          modules: false,
-          chunkModules: false,
-        })
-      );
-      if (stats.hasErrors()) {
-        return reject(new Error('webpack compiled failed.'));
-      }
-      log.info('ICE build finished');
-      applyHook('afterBuild', stats);
-      resolve();
+  const skipCompile = commandArgs.skipCompile || process.env.SKIP_COMPILE;
+  if (skipCompile) {
+    applyHook('afterBuild', {});
+    return Promise.resolve();
+  } else {
+    // empty output path
+    fse.emptyDirSync(webpackConfig.output.path);
+    return new Promise((resolve, reject) => {
+      webpack(webpackConfig, (error, stats) => {
+        if (error) {
+          return reject(error);
+        }
+        console.log(
+          stats.toString({
+            colors: true,
+            chunks: false,
+            children: false,
+            modules: false,
+            chunkModules: false,
+          }),
+        );
+        if (stats.hasErrors()) {
+          return reject(new Error('webpack compiled failed.'));
+        }
+        log.info('ICE build finished');
+        applyHook('afterBuild', stats);
+        resolve();
+      });
     });
-  });
+  }
 };
