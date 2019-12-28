@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.16
+
+- [feat] support process.env.DISABLE_COLLECT to disable pv collect
+
 ## 2.1.15
 
 - [feat] cli option --skip-compile for skip webpack compile
