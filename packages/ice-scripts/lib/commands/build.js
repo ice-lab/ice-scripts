@@ -3,7 +3,6 @@ const webpack = require('webpack');
 const { collectDetail } = require('@alifd/fusion-collector');
 
 const iceScriptsPkgData = require('../../package.json');
-const goldlog = require('../utils/goldlog');
 const log = require('../utils/log');
 const checkDepsInstalled = require('../utils/checkDepsInstalled');
 
@@ -16,10 +15,6 @@ const checkDepsInstalled = require('../utils/checkDepsInstalled');
  */
 module.exports = async function (context) {
   const { applyHook, commandArgs, rootDir, webpackConfig, pkg } = context;
-  goldlog('version', {
-    version: iceScriptsPkgData.version,
-  });
-  goldlog('build', commandArgs);
   log.verbose('build cliOptions', commandArgs);
 
   await applyHook('beforeBuild');
@@ -29,7 +24,7 @@ module.exports = async function (context) {
     return Promise.reject(new Error('项目依赖未安装，请先安装依赖。'));
   }
 
-  if (!pkg.componentConfig && !pkg.blockConfig) {
+  if (!pkg.componentConfig && !pkg.blockConfig && !process.env.DISABLE_COLLECT) {
     // only collect project
     try {
       collectDetail({
@@ -43,28 +38,34 @@ module.exports = async function (context) {
     }
   }
 
-  // empty output path
-  fse.emptyDirSync(webpackConfig.output.path);
-  return new Promise((resolve, reject) => {
-    webpack(webpackConfig, (error, stats) => {
-      if (error) {
-        return reject(error);
-      }
-      console.log(
-        stats.toString({
-          colors: true,
-          chunks: false,
-          children: false,
-          modules: false,
-          chunkModules: false,
-        })
-      );
-      if (stats.hasErrors()) {
-        return reject(new Error('webpack compiled failed.'));
-      }
-      log.info('ICE build finished');
-      applyHook('afterBuild', stats);
-      resolve();
+  const skipCompile = commandArgs.skipCompile || process.env.SKIP_COMPILE;
+  if (skipCompile) {
+    applyHook('afterBuild', {});
+    return Promise.resolve();
+  } else {
+    // empty output path
+    fse.emptyDirSync(webpackConfig.output.path);
+    return new Promise((resolve, reject) => {
+      webpack(webpackConfig, (error, stats) => {
+        if (error) {
+          return reject(error);
+        }
+        console.log(
+          stats.toString({
+            colors: true,
+            chunks: false,
+            children: false,
+            modules: false,
+            chunkModules: false,
+          }),
+        );
+        if (stats.hasErrors()) {
+          return reject(new Error('webpack compiled failed.'));
+        }
+        log.info('ICE build finished');
+        applyHook('afterBuild', stats);
+        resolve();
+      });
     });
-  });
+  }
 };

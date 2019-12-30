@@ -14,18 +14,12 @@ const WebpackDevServer = require('webpack-dev-server');
 const openBrowser = require('react-dev-utils/openBrowser');
 const iceworksClient = require('../utils/iceworksClient');
 const prepareUrLs = require('../utils/prepareURLs');
-const goldlog = require('../utils/goldlog');
 const pkgData = require('../../package.json');
 const log = require('../utils/log');
 const checkDepsInstalled = require('../utils/checkDepsInstalled');
 
 module.exports = async function(context, subprocess) {
   const { applyHook, commandArgs, rootDir, webpackConfig, pkg } = context;
-
-  goldlog('version', {
-    version: pkgData.version,
-  });
-  goldlog('dev', commandArgs);
   log.verbose('dev cliOptions', commandArgs);
 
   await applyHook('beforeDev');
@@ -43,7 +37,7 @@ module.exports = async function(context, subprocess) {
     return Promise.reject(new Error('项目依赖未安装，请先安装依赖。'));
   }
 
-  if (!pkg.componentConfig && !pkg.blockConfig) {
+  if (!pkg.componentConfig && !pkg.blockConfig && !process.env.DISABLE_COLLECT) {
     // only collect project
     try {
       collectDetail({
