@@ -1,24 +1,22 @@
-const path = require('path');
 const chokidar = require('chokidar');
 
 let server = null;
 let watcher = null;
 
 module.exports = ({ onHook, log, context }) => {
-  const { command, rootDir } = context;
+  const { command, iceConfigPath, commandArgs } = context;
   // watch ice.config.js in dev mode
   if (command === 'dev') {
     // setup watch
     // check watcher in case of reRun plugins
     if (!watcher) {
-      const configPath = path.resolve(rootDir, 'ice.config.js');
-      watcher = chokidar.watch(configPath, {
+      watcher = chokidar.watch(iceConfigPath, {
         ignoreInitial: true,
       });
 
       const onUserChange = () => {
         console.log('\n');
-        log.info('ice.config.js has been changed');
+        log.info(`${commandArgs.config || 'ice.config.js'} has been changed`);
         if (!server) {
           log.error('dev server is not ready');
         } else {
