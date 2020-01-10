@@ -11,6 +11,7 @@ const LESS_LOADER = require.resolve('less-loader');
 const POSTCSS_LOADER = require.resolve('postcss-loader');
 const SASS_LOADER = require.resolve('sass-loader');
 const STYLUS_LOADER = require.resolve('stylus-loader');
+const STYLE_LOADER = require.resolve('style-loader');
 const CSS_HOT_LOADER = require.resolve('css-hot-loader');
 const URL_LOADER = require.resolve('url-loader');
 
@@ -55,18 +56,22 @@ module.exports = (chainConfig, mode = 'development') => {
       if (mode !== 'production') {
         rule.use('css-hot-loader')
           .loader(CSS_HOT_LOADER);
+        rule.use('style-loader')
+          .loader(STYLE_LOADER);
       }
-
-      rule.use('MiniCssExtractPlugin.loader')
-        .loader(MiniCssExtractPlugin.loader);
-
+      if (mode === 'production') {
+        rule.use('MiniCssExtractPlugin.loader')
+          .loader(MiniCssExtractPlugin.loader);
+      }
       rule.use('css-loader')
         .loader(CSS_LOADER)
         .options(isModule ? cssModuleLoaderOpts : cssLoaderOpts);
 
       rule.use('postcss-loader')
         .loader(POSTCSS_LOADER)
-        .options(Object.assign({ sourceMap: true }, postcssConfig));
+        .options(Object.assign({
+          sourceMap: true
+        }, postcssConfig));
 
       if (loaders && loaders.length > 0) {
         loaders.forEach((loader) => {
@@ -74,7 +79,9 @@ module.exports = (chainConfig, mode = 'development') => {
 
           rule.use(loaderName)
             .loader(loaderPath)
-            .options(Object.assign({ sourceMap: true }, loaderOptions));
+            .options(Object.assign({
+              sourceMap: true
+            }, loaderOptions));
         });
       }
     }
@@ -91,15 +98,34 @@ module.exports = (chainConfig, mode = 'development') => {
 
   // css loader
   setExtraCSSLoader('css');
-  setExtraCSSLoader('scss', [['sass-loader', SASS_LOADER, {}]]);
-  setExtraCSSLoader('less', [['less-loader', LESS_LOADER, { sourceMap: true, javascriptEnabled: true }]]);
-  setExtraCSSLoader('styl', [['stylus-loader', STYLUS_LOADER, { preferPathResolver: 'webpack' }]]);
+  setExtraCSSLoader('scss', [
+    ['sass-loader', SASS_LOADER, {}]
+  ]);
+  setExtraCSSLoader('less', [
+    ['less-loader', LESS_LOADER, {
+      sourceMap: true,
+      javascriptEnabled: true
+    }]
+  ]);
+  setExtraCSSLoader('styl', [
+    ['stylus-loader', STYLUS_LOADER, {
+      preferPathResolver: 'webpack'
+    }]
+  ]);
 
   // assets loader
-  setAssetsLoader('woff2', /\.woff2?$/, { mimetype: 'application/font-woff' });
-  setAssetsLoader('ttf', /\.ttf$/, { mimetype: 'application/octet-stream' });
-  setAssetsLoader('eot', /\.eot$/, { mimetype: 'application/vnd.ms-fontobject' });
-  setAssetsLoader('svg', /\.svg$/, { mimetype: 'image/svg+xml' });
+  setAssetsLoader('woff2', /\.woff2?$/, {
+    mimetype: 'application/font-woff'
+  });
+  setAssetsLoader('ttf', /\.ttf$/, {
+    mimetype: 'application/octet-stream'
+  });
+  setAssetsLoader('eot', /\.eot$/, {
+    mimetype: 'application/vnd.ms-fontobject'
+  });
+  setAssetsLoader('svg', /\.svg$/, {
+    mimetype: 'image/svg+xml'
+  });
   setAssetsLoader('img', /\.(png|jpg|jpeg|gif)$/i);
 
   // jsx loader
@@ -110,7 +136,9 @@ module.exports = (chainConfig, mode = 'development') => {
     .end()
     .use('babel-loader')
     .loader(BABEL_LOADER)
-    .options(Object.assign({}, deepClone(babelConfig), { cacheDirectory: true }));
+    .options(Object.assign({}, deepClone(babelConfig), {
+      cacheDirectory: true
+    }));
 
   // tsx loader
   chainConfig.module.rule('tsx')
@@ -120,9 +148,13 @@ module.exports = (chainConfig, mode = 'development') => {
     .end()
     .use('babel-loader')
     .loader(BABEL_LOADER)
-    .options(Object.assign({}, deepClone(babelConfig), { cacheDirectory: true }))
+    .options(Object.assign({}, deepClone(babelConfig), {
+      cacheDirectory: true
+    }))
     .end()
     .use('ts-loader')
     .loader(TYPESCRIPT_LOADER)
-    .options({ transpileOnly: true });
+    .options({
+      transpileOnly: true
+    });
 };
