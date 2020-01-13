@@ -1,6 +1,6 @@
 {
   "name": "webpack-plugin-import",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "main": "index.js",
   "scripts": {
     "test": "echo \"test\"",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "http",
-    "url": "https://github.com/alibaba/ice/tree/master/tools/webpack-plugin-import"
+    "url": "https://github.com/ice-lab/ice-scripts/tree/master/packages/webpack-plugin-import"
   },
   "keywords": [],
   "author": "ICE Team",
