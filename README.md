@@ -29,11 +29,11 @@ $ npm install iceworks -g
 # create an empty folder
 $ mkdir iceapp && cd iceapp
 
-# install dependencies
-$ npm install
-
 # create react project
 $ iceworks init
+
+# install dependencies
+$ npm install
 ```
 
 Once the initialization is done, inside the created project, you can run some built-in commands:
