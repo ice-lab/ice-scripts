@@ -29,6 +29,9 @@ $ npm install iceworks -g
 # create an empty folder
 $ mkdir iceapp && cd iceapp
 
+# install dependencies
+$ npm install
+
 # create react project
 $ iceworks init
 ```
