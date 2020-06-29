@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 const program = require('commander');
+const chalk = require('chalk');
 const packageInfo = require('../package.json');
 const checkNodeVersion = require('../lib/utils/checkNodeVersion');
 const validationSassAvailable = require('../lib/utils/validationSassAvailable');
-const chalk = require('chalk');
 
 console.log();
 console.log(chalk.red(`
