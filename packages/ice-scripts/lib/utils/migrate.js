@@ -7,55 +7,59 @@ const t = require('@babel/types');
 const prettier = require('prettier');
 const { getLatestVersion } = require('ice-npm-utils');
 
+// 项目开发插件列表枚举
 const pluginMigrateMap = {
   'ice-plugin-fusion': 'build-plugin-fusion',
   'ice-plugin-antd': 'build-plugin-antd',
-  'ice-plugin-component': 'build-plugin-component',
   'ice-plugin-css-assets-local': 'build-plugin-css-assets-local',
   'ice-plugin-moment-locales': 'build-plugin-moment-locales',
   'ice-plugin-modular-import': 'build-plugin-modular-import',
   'ice-plugin-load-assets': 'build-plugin-load-assets',
   'ice-plugin-smart-debug': 'build-plugin-smart-debug',
-  'ice-plugin-block': 'build-plugin-block',
-  '@ali/ice-plugin-def': '@ali/build-plugin-ice-def',
+  '@ali/ice-plugin-def': '@ali/build-plugin-ice-def'
 };
 
 (async () => {
   const dir = process.cwd();
-  // check ice.config.js
-  const configFilePath = path.join(dir, 'build.json');
-  const iceConfigPath = path.join(dir, 'ice.config.js');
+  const oldConfigPath = path.join(dir, 'ice.config.js');
+  const newConfigPath = path.join(dir, 'build.json');
   const pkgPath = path.join(dir, 'package.json');
-  if (fs.existsSync(configFilePath)) {
-    console.log('当前目录下已存在 build.json 配置，更多配置信息请查看 https://ice.work/')
+
+  // 检测是否含有 build.json
+  if (fs.existsSync(newConfigPath)) {
+    console.log('当前目录下已存在 build.json 配置，更多配置信息请查看 https://ice.work/docs/guide/migrate')
     return;
   }
 
-  if (!fs.existsSync(iceConfigPath)) {
-    console.log('自动迁移工具目前仅支持 ice-scripts 2.x 向 build-scripts 迁移，其他工程迁移，请联系 ICE 团队');
+  // 检测是否含有 ice.config.js
+  if (!fs.existsSync(oldConfigPath)) {
+    console.log('自动迁移工具目前仅支持 ice-scripts 2.x 向 icejs 迁移，其他工程迁移，请联系 ICE 团队');
     return;
   }
 
+  // 检测是否含有 package.json
   if (!fs.existsSync(pkgPath)) {
     console.log('未找到 package.json 文件，请在项目根目录执行迁移');
     return;
   }
 
   const pkgData = fs.readJSONSync(pkgPath);
-  const iceConfigContent = fs.readFileSync(iceConfigPath, 'utf-8');
+  const oldConfigContent = fs.readFileSync(oldConfigPath, 'utf-8');
 
-  // backup
-  fs.copyFileSync(iceConfigPath, path.join(dir, 'ice.config.backup.js'));
+  // 备份 ice.config.js 和 package.json
+  fs.copyFileSync(oldConfigPath, path.join(dir, 'ice.config.backup.js'));
   fs.copyFileSync(pkgPath, path.join(dir, 'package.backup.json'));
 
   const configs = {plugins: []};
   let customNode = null;
   let customParam = null;
   let declarations = [];
+
   const npmCollect = {
-    add: ['@alib/build-scripts'],
+    add: ['ice.js'],
     remove: ['ice-scripts'],
   };
+
   const migratePlugin = (add, remove) => {
     configs.plugins.push(add);
     npmCollect.add.push(Array.isArray(add) ? add[0] : add);
@@ -63,15 +67,12 @@ const pluginMigrateMap = {
       npmCollect.remove.push(remove);
     }
   };
-  if (!pkgData.componentConfig) {
-    migratePlugin('build-plugin-react-app');
-  }
 
   const parseConfig = {
     sourceType: 'module',
     plugins: ['jsx', 'typescript', 'decorators-legacy', 'dynamicImport', 'classProperties'],
   };
-  const ast = parser.parse(iceConfigContent, parseConfig);
+  const ast = parser.parse(oldConfigContent, parseConfig);
   traverse.default(ast, {
     Program(nodePath){
       const { node } = nodePath;
@@ -203,7 +204,7 @@ const pluginMigrateMap = {
   const buildPlugins = [...configs.plugins];
   delete configs.plugins;
   // generate build.json
-  fs.writeJSONSync(configFilePath, { ...configs, plugins: buildPlugins }, { spaces: 2 });
+  fs.writeJSONSync(newConfigPath, { ...configs, plugins: buildPlugins }, { spaces: 2 });
 
   // migrate abc.json
   const defConfigPath = path.join(dir, 'abc.json');
@@ -211,7 +212,7 @@ const pluginMigrateMap = {
   if (isDEF) {
     // abc.json 变更无逻辑变化，无需备份
     const jsonString = JSON.stringify({
-      type: 'build-scripts',
+      type: 'ice-app',
       builder: '@ali/builder-ice-app'
     }, null, 2);
     fs.writeFileSync(defConfigPath, jsonString, 'utf-8');
@@ -219,8 +220,9 @@ const pluginMigrateMap = {
 
   // modify pdgData
   pkgData.scripts = pkgData.scripts || {};
-  pkgData.scripts.start = 'build-scripts start';
-  pkgData.scripts.build = 'build-scripts build';
+  pkgData.scripts.start = 'icejs start';
+  pkgData.scripts.build = 'icejs build';
+  pkgData.scripts.test = 'icejs test';
 
   pkgData.devDependencies = pkgData.devDependencies || {};
   const devDependencies = [];
@@ -243,7 +245,7 @@ const pluginMigrateMap = {
     spaces: 2
   });
 
-  console.log('自动迁移完成，更多信息请查看 https://ice.work/');
+  console.log('自动迁移完成，更多信息请查看 https://ice.work/docs/guide/migrate');
 })()
 
 function checkExportNode(node) {
@@ -273,7 +275,7 @@ function getNodeValue(node) {
 }
 
 function prettierCode(code) {
-  prettier.format(code, {
+  return prettier.format(code, {
     singleQuote: true,
     trailingComma: 'es5',
     parser: 'typescript',
