@@ -46,8 +46,11 @@ module.exports = async () => {
   const pkgData = fs.readJSONSync(pkgPath);
   const oldConfigContent = fs.readFileSync(oldConfigPath, 'utf-8');
 
-  // 备份 ice.config.js 和 package.json
+  // 备份 ice.config.js 后删除
   fs.copyFileSync(oldConfigPath, path.join(dir, 'ice.config.backup.js'));
+  fs.removeSync(oldConfigPath);
+
+  // 备份 package.json
   fs.copyFileSync(pkgPath, path.join(dir, 'package.backup.json'));
 
   const configs = {plugins: []};
@@ -245,7 +248,9 @@ module.exports = async () => {
     spaces: 2
   });
 
-  console.log('自动迁移完成，更多信息请查看 https://ice.work/docs/guide/migrate');
+  console.log();
+  console.log('自动迁移完成，请删除依赖并重新安装后启动项目。');
+  console.log();
 }
 
 function checkExportNode(node) {
