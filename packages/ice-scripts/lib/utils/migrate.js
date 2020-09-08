@@ -19,7 +19,7 @@ const pluginMigrateMap = {
   '@ali/ice-plugin-def': '@ali/build-plugin-ice-def'
 };
 
-(async () => {
+module.exports = async () => {
   const dir = process.cwd();
   const oldConfigPath = path.join(dir, 'ice.config.js');
   const newConfigPath = path.join(dir, 'build.json');
@@ -246,7 +246,7 @@ const pluginMigrateMap = {
   });
 
   console.log('自动迁移完成，更多信息请查看 https://ice.work/docs/guide/migrate');
-})()
+}
 
 function checkExportNode(node) {
   return node && t.isAssignmentExpression(node) && t.isMemberExpression(node.left)
