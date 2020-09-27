@@ -1,5 +1,5 @@
 const path = require('path');
-const formatWinPath = require('../utils/formatWinPath');
+const formatWinPath = require('../../../utils/formatWinPath');
 
 module.exports = ({ chainWebpack, context }, hash) => {
   const { command } = context;

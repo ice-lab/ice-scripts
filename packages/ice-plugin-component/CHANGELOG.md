@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.1.11
+
+ - [fix] assets output path
+
+## 0.1.10
+
+ - [feat] generate declaration when compile ts
+
+## 0.1.9
+
+ - [feat] support basic component @ali/deep for style generate
+
+## 0.1.7
+
+ - [feat] support option watch for compile library when source files changed
+
+## 0.1.6
+
+ - [fix] externals react-dom
+
+## 0.1.5
+
+ - [fix] modular-import did not work with ice-plugin-component alibaba/ice#2724
+
+## 0.1.4
+
+ - [fix] format resolve path in Windows
+ - [fix] modify demo display style
+
 ## 0.1.3
 
  - [fix] remove option importStyle in Demo markdown

@@ -1,10 +1,10 @@
 /* eslint-disable indent */
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const getBaseCofing = require('./webpack.base.js');
+const getBaseConfig = require('./webpack.base.js');
 
 module.exports = () => {
-  const baseConfig = getBaseCofing('production');
+  const baseConfig = getBaseConfig('production');
 
   baseConfig.devtool(false);
 

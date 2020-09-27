@@ -34,7 +34,8 @@ function enhanceEntries(entries, chunk) {
   return hotEntries;
 }
 
-module.exports = (entry, options = {}) => {
+module.exports = (config, options = {}) => {
+  const entry = config.toConfig().entry;
   // 需要区分项目类型，新版的项目直接返回 src/index.js
   let entries = {};
   if (Array.isArray(entry) || typeof entry === 'string') {
@@ -46,15 +47,36 @@ module.exports = (entry, options = {}) => {
       entries[key] = entryWithApp(entry[key]);
     });
   }
+  if (options.polyfill) {
+    const rule = config.module.rule('polyfill').test(/\.jsx?|\.tsx?$/);
+    Object.keys(entries).forEach((key) => {
+      let addPolyfill = false;
+      // only include entry path
+      for (let i = 0; i < entries[key].length; i += 1) {
+        // filter node_modules file add by plugin
+        if (!/node_modules/.test(entries[key][i])) {
+          rule.include.add(entries[key][i]);
+          addPolyfill = true;
+          break;
+        }
+      }
+      if (!addPolyfill) {
+        rule.include.add(entries[key][0]);
+      }
+    });
+    rule.use('polyfill-loader').loader(require.resolve('../utils/polyfillLoader')).options({});
+
+    // add resolve modules for get core-js and regenerator-runtime
+    const modulePath = require.resolve('core-js');
+    const pathArr = modulePath.split('node_modules');
+    pathArr.pop(); // pop file path
+    config.resolve.modules.add(path.join(pathArr.join('node_modules'), 'node_modules'));
+  }
 
   if (options.hotDev) {
     entries = enhanceEntries(entries, hotDevClientPath);
   }
 
-  // Note：https://github.com/alibaba/ice/pull/834
-  if (options.polyfill) {
-    entries = enhanceEntries(entries, require.resolve('@babel/polyfill'));
-  }
-
-  return entries;
+  config.entryPoints.clear();
+  config.merge({ entry: entries });
 };

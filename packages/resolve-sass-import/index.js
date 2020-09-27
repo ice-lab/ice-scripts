@@ -68,7 +68,8 @@ function resolveSassFile(sassFile, rootDir) {
         }
 
         if (resolvePath) {
-          return resolveSassFile(resolvePath, path.dirname(resolvePath));
+          const isLineWrap = /^\n/.exec(importStr);
+          return `${isLineWrap ? '\n' : ''}${resolveSassFile(resolvePath, path.dirname(resolvePath))}`;
         }
       }
     }

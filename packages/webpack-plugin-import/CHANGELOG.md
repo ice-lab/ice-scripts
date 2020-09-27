@@ -1,6 +1,11 @@
 # webpack-plugin-import Changelog
 
+## 0.2.6
+
+- [chore] update repository
+
 ## 0.2.3
+
 - 修复样式引入失败问题
 
 ## 0.2.2

@@ -10,6 +10,7 @@ const CSS_LOADER = require.resolve('css-loader');
 const LESS_LOADER = require.resolve('less-loader');
 const POSTCSS_LOADER = require.resolve('postcss-loader');
 const SASS_LOADER = require.resolve('sass-loader');
+const STYLUS_LOADER = require.resolve('stylus-loader');
 const CSS_HOT_LOADER = require.resolve('css-hot-loader');
 const URL_LOADER = require.resolve('url-loader');
 
@@ -34,7 +35,7 @@ const cssModuleLoaderOpts = {
 module.exports = (chainConfig, mode = 'development') => {
   const babelConfig = getBabelConfig();
 
-  function setExtralCSSLoader(lang, loaders) {
+  function setExtraCSSLoader(lang, loaders) {
     const moduleTestReg = new RegExp(`\\.module\\.${lang}$`);
     const cssTestReg = new RegExp(`\\.${lang}$`);
 
@@ -84,42 +85,44 @@ module.exports = (chainConfig, mode = 'development') => {
 
     rule.use(type)
       .loader(URL_LOADER)
-      .options(Object.assign(defaultAssetsLoaderOpts, loaderOpts));
+      // keep defaultAssetsLoaderOpts immutable
+      .options(Object.assign({}, defaultAssetsLoaderOpts, loaderOpts));
   }
 
   // css loader
-  setExtralCSSLoader('css');
-  setExtralCSSLoader('scss', [['sass-loader', SASS_LOADER, {}]]);
-  setExtralCSSLoader('less', [['less-loader', LESS_LOADER, { sourceMap: true, javascriptEnabled: true }]]);
+  setExtraCSSLoader('css');
+  setExtraCSSLoader('scss', [['sass-loader', SASS_LOADER, {}]]);
+  setExtraCSSLoader('less', [['less-loader', LESS_LOADER, { sourceMap: true, javascriptEnabled: true }]]);
+  setExtraCSSLoader('styl', [['stylus-loader', STYLUS_LOADER, { preferPathResolver: 'webpack' }]]);
 
   // assets loader
-  setAssetsLoader('woff2', /\.woff2?$/, { minetype: 'application/font-woff' });
-  setAssetsLoader('ttf', /\.ttf$/, { minetype: 'application/octet-stream' });
-  setAssetsLoader('eot', /\.eot$/, { minetype: 'application/vnd.ms-fontobject' });
-  setAssetsLoader('svg', /\.svg$/, { minetype: 'image/svg+xml' });
+  setAssetsLoader('woff2', /\.woff2?$/, { mimetype: 'application/font-woff' });
+  setAssetsLoader('ttf', /\.ttf$/, { mimetype: 'application/octet-stream' });
+  setAssetsLoader('eot', /\.eot$/, { mimetype: 'application/vnd.ms-fontobject' });
+  setAssetsLoader('svg', /\.svg$/, { mimetype: 'image/svg+xml' });
   setAssetsLoader('img', /\.(png|jpg|jpeg|gif)$/i);
 
   // jsx loader
   chainConfig.module.rule('jsx')
     .test(/\.jsx?$/)
     .exclude
-      .add(EXCLUDE_REGX)
-      .end()
+    .add(EXCLUDE_REGX)
+    .end()
     .use('babel-loader')
-      .loader(BABEL_LOADER)
-      .options(Object.assign({}, deepClone(babelConfig), { cacheDirectory: true }));
+    .loader(BABEL_LOADER)
+    .options(Object.assign({}, deepClone(babelConfig), { cacheDirectory: true }));
 
   // tsx loader
   chainConfig.module.rule('tsx')
     .test(/\.tsx?$/)
     .exclude
-      .add(EXCLUDE_REGX)
-      .end()
+    .add(EXCLUDE_REGX)
+    .end()
     .use('babel-loader')
-      .loader(BABEL_LOADER)
-      .options(Object.assign({}, deepClone(babelConfig), { cacheDirectory: true }))
-      .end()
+    .loader(BABEL_LOADER)
+    .options(Object.assign({}, deepClone(babelConfig), { cacheDirectory: true }))
+    .end()
     .use('ts-loader')
-      .loader(TYPESCRIPT_LOADER)
-      .options({ transpileOnly: true });
+    .loader(TYPESCRIPT_LOADER)
+    .options({ transpileOnly: true });
 };

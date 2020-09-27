@@ -1,5 +1,72 @@
 # Changelog
 
+## 2.1.16
+
+- [feat] support process.env.DISABLE_COLLECT to disable pv collect
+
+## 2.1.15
+
+- [feat] cli option --skip-compile for skip webpack compile
+
+## 2.1.14
+
+- [feat] support postcssrc/postcss.config.js #2952
+
+## 2.1.13
+
+- [feat] support stylus alibaba/ice#2910
+- [feat] ice-plugin-fusion-material: generate screenshot and html used in fusion cool
+- [feat] ice-plugin-antd supportn option libraryName
+
+## 2.1.12
+
+- [feat] support file watcher for compile library alibaba/ice#2844
+- [feat] support cli option to disable open browser alibaba/ice#2875
+- [fix] wrap lines when resolve sass import alibaba/ice#2876
+
+## 2.1.11
+
+- [fix] error mimetype of image
+- [feat] support --disable-mock to disable mock server
+
+## 2.1.10
+
+- [fix] refactor mock dev server alibaba/ice#2455 alibaba/ice#2471 alibaba/ice#2462
+- [fix] modular-import did not work with ice-plugin-component alibaba/ice#2724
+- [feat] add dll plugin for ice-scripts
+- [fix] write header for proxy request when error ocur
+- [feat] support calculate color variables for multi-theme alibaba/ice#2715
+
+## 2.1.9
+
+- [fix] lock less verison to 3.9.0 less/less.js#3414
+
+## 2.1.8
+
+- [fix] add polyfill when entry path include node_modules
+
+## 2.1.7
+
+- [fix] add polyfill when entry modified by plugin
+- [fix] require modules in shim file
+- [feat] support css localize in dev mode
+
+## 2.1.6
+
+- [fix] remove check latest version of ice-scripts alibaba/ice#2517
+- [fix] modify collect params
+- [fix] use core-js and regenerator-runtime instead of @babel/polyfill
+- [feat] ice-plugin-jsx-plus for support jsx+
+
+## 2.1.5
+
+- [feat] 支持非终端场景下构建日志的输出
+
+## 2.1.4
+
+- [feat] 支持 `ice-scripts test <regexForTestFiles>` 指定测试文件
+- [fix] 修复 node-sass 依赖检查错误时进程退出问题
+
 ## 2.1.3
 
 - [feat] 支持 ice-scripts test 命令

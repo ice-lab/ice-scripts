@@ -1,13 +1,14 @@
 const path = require('path');
 const fse = require('fs-extra');
 const assert = require('assert');
+const deepmerge = require('deepmerge');
+
 const log = require('../utils/log');
 const getPkgData = require('../config/getPackageJson');
 const getDefaultWebpackConfig = require('../config/getDefaultWebpackConfig');
 const processEntry = require('../config/processEntry');
 const PluginAPI = require('./Plugin');
 const defaultConfig = require('../config/default.config');
-const deepmerge = require('deepmerge');
 
 module.exports = class Context {
   constructor({ command = '', rootDir = process.cwd(), args = {} }) {
@@ -88,20 +89,6 @@ module.exports = class Context {
     }
   }
 
-  // process entry
-  processWepackEntry(config) {
-    const entry = config.toConfig().entry;
-    if (entry) {
-      // delete origin entry
-      config.entryPoints.clear();
-      // merge new entry
-      config.merge({ entry: processEntry(entry, {
-        polyfill: this.userConfig.injectBabel !== 'runtime',
-        hotDev: this.command === 'dev' && !this.commandArgs.disabledReload,
-      }) });
-    }
-  }
-
   async applyHook(key, opts = {}) {
     const hooks = this.eventHooks[key] || [];
     const results = [];
@@ -140,7 +127,10 @@ module.exports = class Context {
       }
     }
     // add polyfill/hotdev before origin entry
-    this.processWepackEntry(config);
+    processEntry(config, {
+      hotDev: this.command === 'dev' && !this.commandArgs.disabledReload,
+      polyfill: this.userConfig.injectBabel === 'polyfill',
+    });
     return config.toConfig();
   }
 

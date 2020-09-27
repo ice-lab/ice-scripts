@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.5
+
+- [feat] support libraryName
+
 ## 0.1.3
 
 - [fix] 兼容 options 为空

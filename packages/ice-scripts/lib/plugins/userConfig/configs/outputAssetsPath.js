@@ -1,6 +1,6 @@
 const path = require('path');
 const { last } = require('lodash');
-const formatWinPath = require('../utils/formatWinPath');
+const formatWinPath = require('../../../utils/formatWinPath');
 
 function getFilename(filePath) {
   return last((filePath || '').split('/'));

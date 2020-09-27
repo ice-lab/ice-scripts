@@ -3,10 +3,10 @@ const icePluginWrapCode = require('ice-plugin-wrap-code');
 const getLoadScriptsCode = require('ice-plugin-load-assets/getLoadScriptsCode');
 const getSmartLoaderCode = require('./getSmartLoaderCode');
 
-module.exports = ({ chainWebpack, log, context }) => {
+module.exports = ({ chainWebpack, log, context, ...restApi }) => {
   const { userConfig, rootDir } = context;
   // inject code of getLoadScriptsCode
-  icePluginWrapCode({ chainWebpack, log }, {
+  icePluginWrapCode({ chainWebpack, log, context, ...restApi }, {
     addCodeBefore: `var initLoadUrls = (window.assetsUrls || []).concat(window.customUrls || []);
       ${getLoadScriptsCode()}
       __loadUrls__(initLoadUrls, function(){`,

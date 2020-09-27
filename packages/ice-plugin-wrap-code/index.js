@@ -1,8 +1,9 @@
 const path = require('path');
 const WrapCodePlugin = require('./wrapCodeWebpackPlugin');
 
-module.exports = ({ chainWebpack, log }, pluginOptions = {}) => {
+module.exports = ({ chainWebpack, log, context }, pluginOptions = {}) => {
   const { addCodeBefore, addCodeAfter, fileMatch, id = '' } = pluginOptions;
+  const { userConfig } = context;
   if (addCodeBefore || addCodeAfter) {
     // use id to specify a new plugin name
     chainWebpack((config) => {
@@ -21,8 +22,11 @@ module.exports = ({ chainWebpack, log }, pluginOptions = {}) => {
             const entryKeys = Object.keys(compilerEntry || {});
             // filter entry js file
             if (entryKeys.length && /\.js$/.test(chunkName)) {
-              // index.js => index, index.[hash:6].js => index
-              const assetsName = path.basename(chunkName, path.extname(chunkName)).split('.')[0];
+              // index.js => index, index.[hash:6].js => index, __Component_Dev__.usage.js => __Component_Dev__.usage
+              const assetsBaseName = path.basename(chunkName, path.extname(chunkName));
+              const assetsName = userConfig.hash
+                ? assetsBaseName.substring(0, assetsBaseName.lastIndexOf('.'))
+                : assetsBaseName;
               if (entryKeys.indexOf(assetsName) !== -1) {
                 log.verbose(`\nadd code to ${chunkName}`);
                 return true;

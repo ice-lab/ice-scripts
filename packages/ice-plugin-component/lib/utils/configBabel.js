@@ -1,3 +1,5 @@
+const formatPathForWin = require('../utils/formatPathForWin');
+
 /**
  * @param {class} config
  * @param {object} babelOpts
@@ -17,7 +19,7 @@ module.exports = function (config, babelOpts) {
           const list = (options[babelKey] || []).map((babelOption) => {
             const path = Array.isArray(babelOption) ? babelOption[0] : babelOption;
             // find target babel config and modify options
-            const targetConfig = configList.find(({ name }) => path.indexOf(name) > -1);
+            const targetConfig = configList.find(({ name }) => formatPathForWin(path).indexOf(name) > -1);
             if (targetConfig) {
               matchedConfig[babelKey].push(targetConfig.name);
               return [

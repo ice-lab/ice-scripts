@@ -1,23 +1,33 @@
 #!/usr/bin/env node
 const program = require('commander');
+const chalk = require('chalk');
 const packageInfo = require('../package.json');
-const checkUpdater = require('../lib/utils/checkUpdater');
 const checkNodeVersion = require('../lib/utils/checkNodeVersion');
 const validationSassAvailable = require('../lib/utils/validationSassAvailable');
+
+console.log();
+console.log(chalk.red(`
+  当前 ice-scripts 版本 ${packageInfo.version} 已不在维护，请升级到 ice.js 进行使用。
+  ice.js 在可配置性以及扩展性方面做了极大提升，且满足 ice-scripts 的所有功能。
+`));
+console.log(chalk.yellow(`
+  升级文档：https://ice.work/docs/guide/migrate
+  如升级遇到问题可通过钉钉群与我们联系：https://ice.alicdn.com/assets/images/qrcode.png
+`));
+console.log();
 
 (async () => {
   console.log(packageInfo.name, packageInfo.version);
   // finish check before run command
   checkNodeVersion(packageInfo.engines.node);
   validationSassAvailable();
-  await checkUpdater();
 
   program
     .version(packageInfo.version)
     .usage('<command> [options]')
     .command('build', 'build project')
     .command('dev', 'start server')
-    .command('test', 'run tests with jest');
+    .command('test <regexForTestFiles>', 'run tests with jest');
 
   program.parse(process.argv);
 

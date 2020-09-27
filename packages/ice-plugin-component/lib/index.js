@@ -1,5 +1,8 @@
 const path = require('path');
 const fse = require('fs-extra');
+const clonedeep = require('lodash.clonedeep');
+const chokidar = require('chokidar');
+const resolveSassImport = require('resolve-sass-import');
 const { getPkgJSONSync } = require('./utils/pkgJson');
 const getDemoDir = require('./utils/getDemoDir');
 const getDemos = require('./utils/getDemos');
@@ -8,22 +11,24 @@ const { parseMarkdownParts } = require('./compile/component/markdownHelper');
 const buildSrc = require('./compile/component/buildSrc');
 const modifyPkgHomePage = require('./compile/component/modifyPkgHomePage');
 const ComponentStyleGenerator = require('./compile/fusion/componentStyleGenerator');
-const resolveSassImport = require('./compile/fusion/resolveSassImport');
 const baseConfig = require('./configs/base');
 const devConfig = require('./configs/dev');
 const buildConfig = require('./configs/build');
 const adaptorBuildConfig = require('./configs/adaptorBuild');
 
+let watcher = null;
 module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
   const { command, rootDir, reRun } = context;
-  const { type = 'fusion' } = opts;
+  const { type = 'fusion', watch } = opts;
   const pkg = getPkgJSONSync(rootDir);
-  // store babel config
-  let babelConfig;
+  // store webpack chain config
+  let webpackChain;
   // check adaptor folder
   const hasAdaptor = fse.existsSync(path.join(rootDir, 'adaptor')) && type === 'fusion';
 
   chainWebpack((config) => {
+    // expose config
+    webpackChain = config;
     // add @babel/plugin-transform-runtime
     // @babel/preset-env modules: commonjs
     configBabel(config, {
@@ -49,7 +54,7 @@ module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
       ],
     });
     // get babel config for component compile
-    babelConfig = config.module.rule('jsx').use('babel-loader').get('options');
+    const babelConfig = clonedeep(config.module.rule('jsx').use('babel-loader').get('options'));
     // babel option do not known cacheDirectory
     delete babelConfig.cacheDirectory;
 
@@ -71,32 +76,55 @@ module.exports = ({ context, chainWebpack, onHook, log }, opts = {}) => {
     }
   });
 
+  const compileLib = () => {
+    // get babel config after all plugin had been excuted
+    const babelConfig = clonedeep(webpackChain.module.rule('jsx').use('babel-loader').get('options'));
+    delete babelConfig.cacheDirectory;
+    // component buildSrc
+    buildSrc({ babelConfig, rootDir, log });
+    if (type === 'fusion') {
+      const styleGenerator = new ComponentStyleGenerator({
+        cwd: rootDir,
+        destPath: path.join(rootDir, 'lib'),
+        absoulte: false,
+      });
+
+      styleGenerator.writeStyleJSSync();
+      log.info('Generated style.js');
+
+      styleGenerator.writeIndexScssSync();
+      log.info('Generated index.scss');
+    }
+  };
+
+  if (!watcher && watch) {
+    const srcPath = path.join(rootDir, 'src');
+    log.info(`Start watch path: ${srcPath}`);
+    watcher = chokidar.watch(srcPath, {
+      ignoreInitial: true,
+    });
+
+    watcher.on('change', (file) => {
+      log.info(`${file} changed, start compile library.`);
+      compileLib();
+    });
+
+    watcher.on('error', (error) => {
+      log.error('fail to watch file', error);
+    });
+  }
   // flag for run build again, only excute at the first time of load this plugin
   if (!process.env.BUILD_AGAIN) {
     // build src and umd adpator after demo build
     onHook('afterBuild', () => {
       process.env.BUILD_AGAIN = true;
-      // component buildSrc
-      buildSrc({ babelConfig, rootDir, log });
+      compileLib();
       modifyPkgHomePage(pkg, rootDir);
-
-      if (type === 'fusion') {
-        const styleGenerator = new ComponentStyleGenerator({
-          cwd: rootDir,
-          destPath: path.join(rootDir, 'lib'),
-          absoulte: false,
-        });
-
-        styleGenerator.writeStyleJSSync();
-        log.info('Generated style.js');
-
-        styleGenerator.writeIndexScssSync();
-        log.info('Generated index.scss');
-      }
 
       if (hasAdaptor) {
         // generate adaptor index.scss
         const sassContent = resolveSassImport('main.scss', path.resolve(rootDir, 'src'));
+        fse.ensureDirSync(path.join(rootDir, 'build'));
         fse.writeFileSync(path.resolve(rootDir, 'build/index.scss'), sassContent, 'utf-8');
         // adaptor build
         reRun();

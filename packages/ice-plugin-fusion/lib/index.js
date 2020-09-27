@@ -5,6 +5,7 @@ const CheckIceComponentsDepsPlugin = require('./webpackPlugins/checkIceComponent
 const AppendStyleWebpackPlugin = require('./webpackPlugins/appendStyleWebpackPlugin');
 const getThemeVars = require('./getThemeVars');
 const getThemeCode = require('./getThemeCode');
+const getCalcVars = require('./getCalcVars');
 
 function normalizeEntry(entry, preparedChunks) {
   const preparedName = preparedChunks
@@ -18,7 +19,7 @@ function normalizeEntry(entry, preparedChunks) {
 
 module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
   plugionOptions = plugionOptions || {};
-  const { themePackage, themeConfig } = plugionOptions;
+  const { themePackage, themeConfig, nextLibDir } = plugionOptions;
   let { uniteBaseComponent } = plugionOptions;
   const { rootDir, pkg, userConfig } = context;
 
@@ -40,15 +41,25 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
     let defaultTheme = '';
     if (Array.isArray(themePackage)) {
       const themesCssVars = {};
+      let varsPath = path.join(rootDir, 'node_modules', '@alifd/next/variables.scss');
+      if (!fs.existsSync(varsPath)) {
+        varsPath = false;
+      }
       // get scss variables and generate css variables
       themePackage.forEach(({ name, ...themeData }) => {
         const themePath = path.join(rootDir, 'node_modules', `${name}/variables.scss`);
+        const configData = themeData.themeConfig || {};
         let themeVars = {};
+        let calcVars = {};
+        if (varsPath) {
+          calcVars = getCalcVars(varsPath, themePath, configData);
+        }
         try {
-          themeVars = getThemeVars(themePath, themeData.themeConfig || {});
+          themeVars = getThemeVars(themePath, Object.assign({}, calcVars, configData ));
         } catch (err) {
           log.error('get theme variables err:', err);
         }
+
         replaceVars = themeVars.scssVars;
         defaultScssVars = themeVars.originTheme;
         themesCssVars[name] = themeVars.cssVars;
@@ -67,7 +78,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
         // add theme.js to entry
         const entryNames = Object.keys(config.entryPoints.entries());
         entryNames.forEach((name) => {
-          config.entry(name).add(jsPath);
+          config.entry(name).prepend(jsPath);
         });
       } catch (err) {
         log.error('fail to add theme.js to entry');
@@ -131,7 +142,7 @@ module.exports = async ({ chainWebpack, log, context }, plugionOptions) => {
       style: true,
     }, {
       libraryName: '@alifd/next',
-      libraryDirectory: 'es',
+      libraryDirectory: nextLibDir || 'es',
       style: true,
     }];
     ['jsx', 'tsx'].forEach((rule) => {
