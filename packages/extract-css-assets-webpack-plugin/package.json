@@ -65,7 +65,6 @@
     "postcss": "^6.0.22",
     "request": "^2.87.0",
     "request-promise": "^4.2.2",
-    "url-regex": "^5.0.0",
     "webpack-sources": "^1.1.0"
   }
 }
