@@ -19,7 +19,7 @@ export default postcss.plugin(
   ({ outputOptions, options }, opts = {}) => {
     // 所有 css 中的网络请求
     const networkRequestMap = {};
-    const publicPath = outputOptions.publicPath || ';
+    const publicPath = outputOptions.publicPath || '';
     const isUrlPath = /^(https?\:)?\/\//.test(publicPath);
 
     return (root) => {
