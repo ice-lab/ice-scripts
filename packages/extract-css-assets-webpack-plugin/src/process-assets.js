@@ -1,34 +1,40 @@
-import crypto from 'crypto';
-import fileType from 'file-type';
-import path from 'path';
-import postcss from 'postcss';
-import request from 'request-promise';
-import chalk from 'chalk';
+import crypto from "crypto";
+import fileType from "file-type";
+import path from "path";
+import postcss from "postcss";
+import request from "request-promise";
+import chalk from "chalk";
 
 const urlReg = /url\(('|")?((?:http|\/\/)(?:[^"']+))(\1)\)/;
 
 const getDeclUrl = (value) => {
   const url = value.match(urlReg)[2];
-  const md5 = crypto.createHash('md5');
-  const urlIdentity = md5.update(url).digest('hex');
+  const md5 = crypto.createHash("md5");
+  const urlIdentity = md5.update(url).digest("hex");
   return { urlIdentity, url };
 };
 
 export default postcss.plugin(
-  'postcss-assets',
+  "postcss-assets",
   ({ outputOptions, options }, opts = {}) => {
     // 所有 css 中的网络请求
     const networkRequestMap = {};
+    const publicPath = outputOptions.publicPath || "";
+    const isUrlPath = /^(https?\:)?\/\//.test(publicPath);
 
     return (root) => {
       return new Promise((resolve) => {
         // 字体文件
         root.walkAtRules((atrule) => {
           atrule.walkDecls((decl) => {
-            if (decl.prop == 'src') {
-              decl.value.split(',').forEach((value) => {
+            if (decl.prop == "src") {
+              decl.value.split(",").forEach((value) => {
                 if (urlReg.test(value)) {
                   const { url, urlIdentity } = getDeclUrl(value);
+                  if (publicPath && url.startsWith(publicPath)) {
+                    // 已经是 publicPath名下的资源可以不用本地化
+                    return;
+                  }
                   networkRequestMap[urlIdentity] = { url, decl };
                 }
               });
@@ -38,9 +44,13 @@ export default postcss.plugin(
         // 常规 css
         root.walkRules((rule) => {
           rule.walkDecls((decl) => {
-            if (decl.prop == 'background-image' || decl.prop == 'background') {
+            if (decl.prop == "background-image" || decl.prop == "background") {
               if (urlReg.test(decl.value)) {
                 const { url, urlIdentity } = getDeclUrl(decl.value);
+                if (publicPath && url.startsWith(publicPath)) {
+                  // 已经是 publicPath名下的资源可以不用本地化
+                  return;
+                }
                 networkRequestMap[urlIdentity] = { url, decl };
               }
             }
@@ -49,21 +59,24 @@ export default postcss.plugin(
 
         if (Object.keys(networkRequestMap).length > 0) {
           Promise.all(
-            Object.entries(networkRequestMap).map(([urlIdentity, networkRequest]) => {
-              const originUrl = networkRequest.url;
-              const url = originUrl.startsWith('http')
-                ? originUrl
-                : `http:${originUrl}`;
-              return request.get({ url, encoding: null, ...options.requsetOptions }).then((res) => {
-                const buffer = Buffer.from(res, 'utf-8');
-                const fileExtName = path.extname(url);
-                const fileExtType = fileType(buffer);
-                const md5 = crypto.createHash('md5');
-                const ext =
-                  fileExtType && fileExtType.ext
-                    ? `.${fileExtType.ext}`
-                    : fileExtName;
-                const basename = md5.update(buffer).digest('hex') + ext;
+            Object.entries(networkRequestMap).map(
+              ([urlIdentity, networkRequest]) => {
+                const originUrl = networkRequest.url;
+                const url = originUrl.startsWith("http")
+                  ? originUrl
+                  : `http:${originUrl}`;
+                return request
+                  .get({ url, encoding: null, ...options.requsetOptions })
+                  .then((res) => {
+                    const buffer = Buffer.from(res, "utf-8");
+                    const fileExtName = path.extname(url);
+                    const fileExtType = fileType(buffer);
+                    const md5 = crypto.createHash("md5");
+                    const ext =
+                      fileExtType && fileExtType.ext
+                        ? `.${fileExtType.ext}`
+                        : fileExtName;
+                    const basename = md5.update(buffer).digest("hex") + ext;
 
                     const contextPath = path
                       .join(
@@ -71,17 +84,19 @@ export default postcss.plugin(
                         options.outputPath,
                         basename
                       )
-                      .replace(/\\/g, '/');
+                      .replace(/\\/g, "/");
 
                     const outputPath = path
                       .join(options.outputPath, basename)
-                      .replace(/\\/g, '/');
+                      .replace(/\\/g, "/");
 
+                    const publicFullPath = `${outputOptions.publicPath}${outputPath}`;
                     const asset = {
                       contents: buffer,
                       contextPath,
                       outputPath,
                       basename,
+                      publicFullPath,
                     };
 
                     networkRequestMap[urlIdentity] = asset;
@@ -91,12 +106,12 @@ export default postcss.plugin(
                   })
                   .catch((err) => {
                     console.log(
-                      chalk.cyan('[ExtractCssAssetsWebpackPlugin]'),
-                      chalk.yellow('Warning:'),
-                      'Asset download failed',
+                      chalk.cyan("[ExtractCssAssetsWebpackPlugin]"),
+                      chalk.yellow("Warning:"),
+                      "Asset download failed",
                       chalk.blue.underline(url)
                     );
-                    console.log('   ', err.error.toString());
+                    console.log("   ", err.error.toString());
 
                     delete networkRequestMap[urlIdentity];
                   });
@@ -106,27 +121,35 @@ export default postcss.plugin(
             // 字体文件
             root.walkAtRules((atrule) => {
               atrule.walkDecls((decl) => {
-                if (decl.prop == 'src') {
+                if (decl.prop == "src") {
                   const newValue = decl.value
-                    .split(',')
+                    .split(",")
                     .map((value) => {
                       if (urlReg.test(value)) {
-                        const { urlIdentity } = getDeclUrl(value);
+                        const { urlIdentity, url } = getDeclUrl(value);
+                        if (publicPath && url.startsWith(publicPath)) {
+                          // 已经是 publicPath名下的资源可以不用本地化
+                          return;
+                        }
                         return value.replace(urlReg, (str) => {
                           if (
                             networkRequestMap[urlIdentity] &&
+                            isUrlPath &&
+                            networkRequestMap[urlIdentity].publicFullPath
+                          ) {
+                            return `url('${networkRequestMap[urlIdentity].publicFullPath}')`;
+                          } else if (
+                            networkRequestMap[urlIdentity] &&
                             networkRequestMap[urlIdentity].contextPath
                           ) {
-                            return `url('${
-                              networkRequestMap[urlIdentity].contextPath
-                            }')`;
+                            return `url('${networkRequestMap[urlIdentity].contextPath}')`;
                           }
                           return str;
                         });
                       }
                       return value;
                     })
-                    .join(',');
+                    .join(",");
                   decl.value = newValue;
                 }
               });
@@ -135,19 +158,27 @@ export default postcss.plugin(
             root.walkRules((rule) => {
               rule.walkDecls((decl) => {
                 if (
-                  decl.prop == 'background-image' ||
-                  decl.prop == 'background'
+                  decl.prop == "background-image" ||
+                  decl.prop == "background"
                 ) {
                   if (urlReg.test(decl.value)) {
-                    const { urlIdentity } = getDeclUrl(decl.value);
+                    const { urlIdentity, url } = getDeclUrl(decl.value);
+                    if (publicPath && url.startsWith(publicPath)) {
+                      // 已经是 publicPath名下的资源可以不用本地化
+                      return;
+                    }
                     decl.value = decl.value.replace(urlReg, (str) => {
                       if (
                         networkRequestMap[urlIdentity] &&
+                        isUrlPath &&
+                        networkRequestMap[urlIdentity].publicFullPath
+                      ) {
+                        return `url('${networkRequestMap[urlIdentity].publicFullPath}')`;
+                      } else if (
+                        networkRequestMap[urlIdentity] &&
                         networkRequestMap[urlIdentity].contextPath
                       ) {
-                        return `url('${
-                          networkRequestMap[urlIdentity].contextPath
-                        }')`;
+                        return `url('${networkRequestMap[urlIdentity].contextPath}')`;
                       }
                       return str;
                     });

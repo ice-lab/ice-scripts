@@ -1,15 +1,15 @@
 // import webpack from 'webpack';
-import { RawSource } from 'webpack-sources';
-import postcss from 'postcss';
+import { RawSource } from "webpack-sources";
+import postcss from "postcss";
 
-import ProcessAssets from './process-assets';
+import ProcessAssets from "./process-assets";
 
 class ExtractCssAssetsPlugin {
   constructor(options) {
     this.options = Object.assign(
       {
-        outputPath: '',
-        relativeCssPath: '',
+        outputPath: "",
+        relativeCssPath: "",
         requsetOptions: {
           timeout: 5000,
         },
@@ -20,19 +20,15 @@ class ExtractCssAssetsPlugin {
 
   apply(compiler) {
     const options = this.options;
-    compiler.hooks.emit.tapPromise('ExtractCssAssetsPlugin', (compilation) => {
+    compiler.hooks.emit.tapPromise("ExtractCssAssetsPlugin", (compilation) => {
       const { outputOptions } = compilation;
       const collectChunks = []; // 收集资源
-
-      if (/(https?:)?\/\//.test(outputOptions.publicPath)) {
-        return Promise.resolve();
-      }
 
       return Promise.all(
         Object.keys(compilation.assets)
           .map((filename) => {
             let asset = compilation.assets[filename];
-            if (filename.endsWith('.css')) {
+            if (filename.endsWith(".css")) {
               const css = asset.source();
               return new Promise((resolve) => {
                 postcss()
