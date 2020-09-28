@@ -129,7 +129,7 @@ export default postcss.plugin(
                         const { urlIdentity, url } = getDeclUrl(value);
                         if (publicPath && url.startsWith(publicPath)) {
                           // 已经是 publicPath名下的资源可以不用本地化
-                          return;
+                          return value;
                         }
                         return value.replace(urlReg, (str) => {
                           if (
