@@ -10,13 +10,14 @@ let projectPkgData = null;
 
 module.exports = function (source) {
   const options = loaderUtils.getOptions(this);
+  const rootContext = this.rootContext || this.options.context;
 
   const { themeFile, themeConfig } = options;
-  const modulePath = path.relative(this.rootContext, this.resourcePath);
+  const modulePath = path.relative(rootContext, this.resourcePath);
 
   if (!projectPkgData) {
     try {
-      projectPkgData = require(path.resolve(this.rootContext, 'package.json'));
+      projectPkgData = require(path.resolve(rootContext, 'package.json'));
     } catch (err) {
       console.error(chalk.red('\n[Error] 读取 package.json 出错'), err);
       projectPkgData = {};
