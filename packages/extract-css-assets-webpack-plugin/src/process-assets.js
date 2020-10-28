@@ -134,7 +134,7 @@ export default postcss.plugin(
                         return value.replace(urlReg, (str) => {
                           if (
                             networkRequestMap[urlIdentity] &&
-                            isUrlPath &&
+                            isUrlPublicPath &&
                             networkRequestMap[urlIdentity].publicFullPath
                           ) {
                             return `url('${networkRequestMap[urlIdentity].publicFullPath}')`;
@@ -170,7 +170,7 @@ export default postcss.plugin(
                     decl.value = decl.value.replace(urlReg, (str) => {
                       if (
                         networkRequestMap[urlIdentity] &&
-                        isUrlPath &&
+                        isUrlPublicPath &&
                         networkRequestMap[urlIdentity].publicFullPath
                       ) {
                         return `url('${networkRequestMap[urlIdentity].publicFullPath}')`;
