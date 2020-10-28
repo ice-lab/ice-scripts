@@ -21,14 +21,16 @@ export default postcss.plugin(
     const networkRequestMap = {};
     const publicPath = outputOptions.publicPath || '';
     const isUrlPublicPath = /^(https?\:)?\/\//.test(publicPath);
-
+    console.log("isUrlPublicPath", isUrlPublicPath)
     return (root) => {
       return new Promise((resolve) => {
         // 字体文件
         root.walkAtRules((atrule) => {
           atrule.walkDecls((decl) => {
             if (decl.prop == 'src') {
+
               decl.value.split(',').forEach((value) => {
+                console.log("decl.value src -=-=-=-=-=-=- ", value);
                 if (urlReg.test(value)) {
                   const { url, urlIdentity } = getDeclUrl(value);
                   if (isUrlPublicPath && url.startsWith(publicPath)) {
@@ -100,7 +102,6 @@ export default postcss.plugin(
                     };
 
                     networkRequestMap[urlIdentity] = asset;
-
                     opts.emit(asset);
                     return Promise.resolve(asset);
                   })
@@ -125,13 +126,15 @@ export default postcss.plugin(
                   const newValue = decl.value
                     .split(',')
                     .map((value) => {
+                      console.log("value src -=-=-=-=-=-=- ", value);
                       if (urlReg.test(value)) {
                         const { urlIdentity, url } = getDeclUrl(value);
                         if (isUrlPublicPath && url.startsWith(publicPath)) {
-                  // 已经是 publicPath 名下的网络资源可以不用本地化
-                  return;
-                }
+                          // 已经是 publicPath 名下的网络资源可以不用本地化
+                          return;
+                        }
                         return value.replace(urlReg, (str) => {
+                          console.log("sdfasdfa", str);
                           if (
                             networkRequestMap[urlIdentity] &&
                             isUrlPublicPath &&
