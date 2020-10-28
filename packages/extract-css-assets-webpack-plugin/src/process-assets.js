@@ -19,6 +19,8 @@ export default postcss.plugin(
   ({ outputOptions, options }, opts = {}) => {
     // 所有 css 中的网络请求
     const networkRequestMap = {};
+    const publicPath = outputOptions.publicPath || '';
+    const isUrlPath = /^(https?\:)?\/\//.test(publicPath);
 
     return (root) => {
       return new Promise((resolve) => {
@@ -29,6 +31,10 @@ export default postcss.plugin(
               decl.value.split(',').forEach((value) => {
                 if (urlReg.test(value)) {
                   const { url, urlIdentity } = getDeclUrl(value);
+                  if (publicPath && url.startsWith(publicPath)) {
+                    // 已经是 publicPath名下的资源可以不用本地化
+                    return;
+                  }
                   networkRequestMap[urlIdentity] = { url, decl };
                 }
               });
@@ -41,6 +47,10 @@ export default postcss.plugin(
             if (decl.prop == 'background-image' || decl.prop == 'background') {
               if (urlReg.test(decl.value)) {
                 const { url, urlIdentity } = getDeclUrl(decl.value);
+                if (publicPath && url.startsWith(publicPath)) {
+                  // 已经是 publicPath名下的资源可以不用本地化
+                  return;
+                }
                 networkRequestMap[urlIdentity] = { url, decl };
               }
             }
@@ -49,21 +59,24 @@ export default postcss.plugin(
 
         if (Object.keys(networkRequestMap).length > 0) {
           Promise.all(
-            Object.entries(networkRequestMap).map(([urlIdentity, networkRequest]) => {
-              const originUrl = networkRequest.url;
-              const url = originUrl.startsWith('http')
-                ? originUrl
-                : `http:${originUrl}`;
-              return request.get({ url, encoding: null, ...options.requsetOptions }).then((res) => {
-                const buffer = Buffer.from(res, 'utf-8');
-                const fileExtName = path.extname(url);
-                const fileExtType = fileType(buffer);
-                const md5 = crypto.createHash('md5');
-                const ext =
-                  fileExtType && fileExtType.ext
-                    ? `.${fileExtType.ext}`
-                    : fileExtName;
-                const basename = md5.update(buffer).digest('hex') + ext;
+            Object.entries(networkRequestMap).map(
+              ([urlIdentity, networkRequest]) => {
+                const originUrl = networkRequest.url;
+                const url = originUrl.startsWith('http')
+                  ? originUrl
+                  : `http:${originUrl}`;
+                return request
+                  .get({ url, encoding: null, ...options.requsetOptions })
+                  .then((res) => {
+                    const buffer = Buffer.from(res, 'utf-8');
+                    const fileExtName = path.extname(url);
+                    const fileExtType = fileType(buffer);
+                    const md5 = crypto.createHash('md5');
+                    const ext =
+                      fileExtType && fileExtType.ext
+                        ? `.${fileExtType.ext}`
+                        : fileExtName;
+                    const basename = md5.update(buffer).digest('hex') + ext;
 
                     const contextPath = path
                       .join(
@@ -77,11 +90,13 @@ export default postcss.plugin(
                       .join(options.outputPath, basename)
                       .replace(/\\/g, '/');
 
+                    const publicFullPath = `${outputOptions.publicPath}${outputPath}`;
                     const asset = {
                       contents: buffer,
                       contextPath,
                       outputPath,
                       basename,
+                      publicFullPath,
                     };
 
                     networkRequestMap[urlIdentity] = asset;
@@ -111,15 +126,23 @@ export default postcss.plugin(
                     .split(',')
                     .map((value) => {
                       if (urlReg.test(value)) {
-                        const { urlIdentity } = getDeclUrl(value);
+                        const { urlIdentity, url } = getDeclUrl(value);
+                        if (publicPath && url.startsWith(publicPath)) {
+                          // 已经是 publicPath名下的资源可以不用本地化
+                          return value;
+                        }
                         return value.replace(urlReg, (str) => {
                           if (
                             networkRequestMap[urlIdentity] &&
+                            isUrlPath &&
+                            networkRequestMap[urlIdentity].publicFullPath
+                          ) {
+                            return `url('${networkRequestMap[urlIdentity].publicFullPath}')`;
+                          } else if (
+                            networkRequestMap[urlIdentity] &&
                             networkRequestMap[urlIdentity].contextPath
                           ) {
-                            return `url('${
-                              networkRequestMap[urlIdentity].contextPath
-                            }')`;
+                            return `url('${networkRequestMap[urlIdentity].contextPath}')`;
                           }
                           return str;
                         });
@@ -139,15 +162,23 @@ export default postcss.plugin(
                   decl.prop == 'background'
                 ) {
                   if (urlReg.test(decl.value)) {
-                    const { urlIdentity } = getDeclUrl(decl.value);
+                    const { urlIdentity, url } = getDeclUrl(decl.value);
+                    if (publicPath && url.startsWith(publicPath)) {
+                      // 已经是 publicPath名下的资源可以不用本地化
+                      return;
+                    }
                     decl.value = decl.value.replace(urlReg, (str) => {
                       if (
                         networkRequestMap[urlIdentity] &&
+                        isUrlPath &&
+                        networkRequestMap[urlIdentity].publicFullPath
+                      ) {
+                        return `url('${networkRequestMap[urlIdentity].publicFullPath}')`;
+                      } else if (
+                        networkRequestMap[urlIdentity] &&
                         networkRequestMap[urlIdentity].contextPath
                       ) {
-                        return `url('${
-                          networkRequestMap[urlIdentity].contextPath
-                        }')`;
+                        return `url('${networkRequestMap[urlIdentity].contextPath}')`;
                       }
                       return str;
                     });
