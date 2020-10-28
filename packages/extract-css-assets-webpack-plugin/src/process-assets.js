@@ -20,7 +20,7 @@ export default postcss.plugin(
     // 所有 css 中的网络请求
     const networkRequestMap = {};
     const publicPath = outputOptions.publicPath || '';
-    const isUrlPath = /^(https?\:)?\/\//.test(publicPath);
+    const isUrlPublicPath = /^(https?\:)?\/\//.test(publicPath);
 
     return (root) => {
       return new Promise((resolve) => {
@@ -31,8 +31,8 @@ export default postcss.plugin(
               decl.value.split(',').forEach((value) => {
                 if (urlReg.test(value)) {
                   const { url, urlIdentity } = getDeclUrl(value);
-                  if (publicPath && url.startsWith(publicPath)) {
-                    // 已经是 publicPath名下的资源可以不用本地化
+                  if (isUrlPublicPath && url.startsWith(publicPath)) {
+                    // 已经是 publicPath 名下的网络资源可以不用本地化
                     return;
                   }
                   networkRequestMap[urlIdentity] = { url, decl };
@@ -47,8 +47,8 @@ export default postcss.plugin(
             if (decl.prop == 'background-image' || decl.prop == 'background') {
               if (urlReg.test(decl.value)) {
                 const { url, urlIdentity } = getDeclUrl(decl.value);
-                if (publicPath && url.startsWith(publicPath)) {
-                  // 已经是 publicPath名下的资源可以不用本地化
+                if (isUrlPublicPath && url.startsWith(publicPath)) {
+                  // 已经是 publicPath 名下的网络资源可以不用本地化
                   return;
                 }
                 networkRequestMap[urlIdentity] = { url, decl };
@@ -127,10 +127,10 @@ export default postcss.plugin(
                     .map((value) => {
                       if (urlReg.test(value)) {
                         const { urlIdentity, url } = getDeclUrl(value);
-                        if (publicPath && url.startsWith(publicPath)) {
-                          // 已经是 publicPath名下的资源可以不用本地化
-                          return value;
-                        }
+                        if (isUrlPublicPath && url.startsWith(publicPath)) {
+                  // 已经是 publicPath 名下的网络资源可以不用本地化
+                  return;
+                }
                         return value.replace(urlReg, (str) => {
                           if (
                             networkRequestMap[urlIdentity] &&
@@ -163,8 +163,8 @@ export default postcss.plugin(
                 ) {
                   if (urlReg.test(decl.value)) {
                     const { urlIdentity, url } = getDeclUrl(decl.value);
-                    if (publicPath && url.startsWith(publicPath)) {
-                      // 已经是 publicPath名下的资源可以不用本地化
+                    if (isUrlPublicPath && url.startsWith(publicPath)) {
+                      // 已经是 publicPath 名下的网络资源可以不用本地化
                       return;
                     }
                     decl.value = decl.value.replace(urlReg, (str) => {
