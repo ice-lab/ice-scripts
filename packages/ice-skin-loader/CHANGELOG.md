@@ -1,5 +1,9 @@
 # ice-skin-loader Changelog
 
+## 0.3.1
+
+- [fix] 修复 nextPrefix 在业务代码中不生效问题
+
 ## 0.3.0
 
 - [chore] scss 变量覆盖不再做驼峰转换
