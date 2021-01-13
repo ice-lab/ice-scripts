@@ -23,20 +23,19 @@ module.exports = function (source) {
     }
   }
 
-  // 使用 `@alifd/next` 的项目，对于项目自身的 scss 文件自动引入 next 变量，业务代码里无需手动 @import
   let importVarsCode = '';
-  if (
-    projectPkgData
+  const useNext = projectPkgData
     && projectPkgData.dependencies
-    && projectPkgData.dependencies['@alifd/next']
-    && !/^node_modules[\\/]/.test(modulePath)
-  ) {
+    && projectPkgData.dependencies['@alifd/next'];
+
+  // 使用 `@alifd/next` 的项目，项目自身的 scss 文件自动引入 next 变量，业务代码里无需手动 @import
+  if (useNext && !/^node_modules[\\/]/.test(modulePath)) {
     importVarsCode = `@import '~@alifd/next/lib/core/index.scss';`;
   }
 
   let prefixVars = '';
-  if (themeConfig.nextPrefix && /@alifd[\\/]next[\\/](lib|es)[\\/](.+).scss$/.test(modulePath)) {
-    // 将 next 1.x 的 prefix 从 next- 改为自定义前缀，解决 0.x&1.x 混用的问题
+  if (useNext && themeConfig.nextPrefix) {
+    // 修改 next-prefix
     prefixVars = `$css-prefix: "${themeConfig.nextPrefix}";`;
   }
 
