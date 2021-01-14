@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "start": "icejs start",
+    "build": "icejs build",
+    "test": "icejs test"
+  },
+  "devDependencies": {
+    "ice.js": "^1.9.0",
+    "build-plugin-fusion": "^0.1.0",
+    "build-plugin-load-assets": "^0.1.1"
+  }
+}
